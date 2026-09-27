@@ -150,6 +150,14 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .plan-manage-name { font-weight: 700; }
 .plan-manage-price { color: var(--brown); font-weight: 800; margin: 0 12px; }
 .delist-btn { background: #fce8e6; color: var(--error); border: 1px solid #f0b0a0; border-radius: 8px; padding: 5px 12px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
+
+/* ── 訂單分組 ── */
+.order-group { margin-bottom: 10px; border: 1.5px solid var(--light-brown); border-radius: 12px; overflow: hidden; }
+.order-group-header { background: #fff8ee; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 13px; color: var(--text); }
+.order-group-header:hover { background: #fef5e6; }
+.group-arrow { font-size: 11px; color: var(--subtext); transition: transform 0.2s; }
+.order-group-body { padding: 10px; background: var(--cream); }
+.order-group-body .admin-order-item:last-child { margin-bottom: 0; }
 </style>
 </head>
 <body>
@@ -616,27 +624,61 @@ async function loadAllOrders() {
       document.getElementById('allOrderList').innerHTML = '<div class="empty-state">沒有訂單紀錄</div>';
       return;
     }
-    document.getElementById('allOrderList').innerHTML = orders.map((o, i) => `
-      <div class="admin-order-item">
-        <div class="admin-order-header">
-          <div>
-            <div class="admin-order-agent">業務：${o['業務編號'] || ''}</div>
-            <div class="admin-order-plan">${o['方案名稱'] || ''}</div>
+
+    // 依日期分組
+    const groups = {};
+    orders.forEach(o => {
+      const dateStr = o['時間'] ? String(o['時間']).split(' ')[0] : '未知日期';
+      if (!groups[dateStr]) groups[dateStr] = [];
+      groups[dateStr].push(o);
+    });
+
+    document.getElementById('allOrderList').innerHTML = Object.entries(groups).map(([date, items]) => `
+      <div class="order-group">
+        <div class="order-group-header" onclick="toggleGroup('${date.replace(/\//g,'_')}')">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="group-arrow" id="arrow-${date.replace(/\//g,'_')}">▼</span>
+            <strong>${date}</strong>
+            <span style="font-size:11px;color:var(--subtext);">${items.length} 筆</span>
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-            <div class="order-status status-${o['狀態'] === '已確認' ? 'confirmed' : 'pending'}">${o['狀態'] || '待確認'}</div>
-            ${o['狀態'] !== '已確認' ? `<button class="confirm-btn" onclick="confirmOrder(${o['_row']})">✅ 確認</button>` : ''}
-          </div>
+          <div style="font-size:13px;font-weight:800;color:var(--brown);">$${items.reduce((s,o) => s + Number(o['總金額']||0), 0).toLocaleString()}</div>
         </div>
-        <div class="admin-order-detail">
-          🕐 ${o['時間'] || ''}<br>
-          🔢 ${o['組數'] || ''}組${o['客戶姓名'] ? ` · 👤 ${o['客戶姓名']}` : ''}${o['備註'] ? ` · 📝 ${o['備註']}` : ''}
+        <div class="order-group-body" id="group-${date.replace(/\//g,'_')}">
+          ${items.map(o => `
+            <div class="admin-order-item">
+              <div class="admin-order-header">
+                <div>
+                  <div class="admin-order-agent">業務：${o['業務編號'] || ''}</div>
+                  <div class="admin-order-plan">${o['方案名稱'] || ''}</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                  <div class="order-status status-${o['狀態'] === '已確認' ? 'confirmed' : 'pending'}">${o['狀態'] || '待確認'}</div>
+                  ${o['狀態'] !== '已確認' ? `<button class="confirm-btn" onclick="confirmOrder(${o['_row']})">✅ 確認</button>` : ''}
+                </div>
+              </div>
+              <div class="admin-order-detail">
+                🔢 ${o['組數']||''}組${o['客戶姓名'] ? ` · 👤 ${o['客戶姓名']}` : ''}${o['備註'] ? ` · 📝 ${o['備註']}` : ''}
+              </div>
+              <div class="admin-order-total">$${Number(o['總金額']||0).toLocaleString()}</div>
+            </div>
+          `).join('')}
         </div>
-        <div class="admin-order-total">$${Number(o['總金額'] || 0).toLocaleString()}</div>
       </div>
     `).join('');
   } catch(e) {
     document.getElementById('allOrderList').innerHTML = '<div class="empty-state">載入失敗</div>';
+  }
+}
+
+window.toggleGroup = function(id) {
+  const body = document.getElementById(`group-${id}`);
+  const arrow = document.getElementById(`arrow-${id}`);
+  if (body.style.display === 'none') {
+    body.style.display = 'block';
+    arrow.textContent = '▼';
+  } else {
+    body.style.display = 'none';
+    arrow.textContent = '▶';
   }
 }
 
