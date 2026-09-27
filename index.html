@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <script>
-  const VERSION = '3';
+  const VERSION = '4';
   const url = new URL(window.location.href);
   if (url.searchParams.get('v') !== VERSION) {
     url.searchParams.set('v', VERSION);
@@ -289,14 +289,9 @@ function showMain() {
 // ── 方案 ──
 async function loadAndRenderPlans() {
   try {
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'getPlans' })
-    });
+    const res = await fetch(APPS_SCRIPT_URL + '?type=getPlans');
     const data = await res.json();
     if (data.plans && data.plans.length) {
-      // 從 Sheet 讀取成功
       const plans = data.plans.map(p => ({
         id: p['方案編號'],
         name: p['方案名稱'],
@@ -309,6 +304,7 @@ async function loadAndRenderPlans() {
       renderPlans(DEFAULT_PLANS);
     }
   } catch(e) {
+    console.log('載入方案失敗，使用預設方案', e);
     renderPlans(DEFAULT_PLANS);
   }
 }
