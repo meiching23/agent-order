@@ -628,22 +628,29 @@ async function loadAllOrders() {
     // 依日期分組
     const groups = {};
     orders.forEach(o => {
-      const dateStr = o['時間'] ? String(o['時間']).split(' ')[0] : '未知日期';
+      const timeStr = o['時間'] ? String(o['時間']) : '';
+      const dateOnly = timeStr.split('T')[0] || timeStr.split(' ')[0] || '未知日期';
+      // 轉成台灣格式 2026-09-27 → 2026/09/27
+      const dateStr = dateOnly.replace(/-/g, '/');
       if (!groups[dateStr]) groups[dateStr] = [];
       groups[dateStr].push(o);
     });
 
-    document.getElementById('allOrderList').innerHTML = Object.entries(groups).map(([date, items]) => `
+    const makeId = (date) => date.replace(/[\\/:\s]/g, '_');
+
+    document.getElementById('allOrderList').innerHTML = Object.entries(groups).map(([date, items]) => {
+      const id = makeId(date);
+      return `
       <div class="order-group">
-        <div class="order-group-header" onclick="toggleGroup('${date.replace(/\//g,'_')}')">
+        <div class="order-group-header" onclick="toggleGroup('${id}')">
           <div style="display:flex;align-items:center;gap:8px;">
-            <span class="group-arrow" id="arrow-${date.replace(/\//g,'_')}">▼</span>
+            <span class="group-arrow" id="arrow-${id}">▼</span>
             <strong>${date}</strong>
             <span style="font-size:11px;color:var(--subtext);">${items.length} 筆</span>
           </div>
           <div style="font-size:13px;font-weight:800;color:var(--brown);">$${items.reduce((s,o) => s + Number(o['總金額']||0), 0).toLocaleString()}</div>
         </div>
-        <div class="order-group-body" id="group-${date.replace(/\//g,'_')}">
+        <div class="order-group-body" id="group-${id}">
           ${items.map(o => `
             <div class="admin-order-item">
               <div class="admin-order-header">
@@ -663,8 +670,8 @@ async function loadAllOrders() {
             </div>
           `).join('')}
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   } catch(e) {
     document.getElementById('allOrderList').innerHTML = '<div class="empty-state">載入失敗</div>';
   }
