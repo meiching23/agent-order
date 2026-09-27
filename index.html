@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <script>
-  const VERSION = '4';
+  const VERSION = '5';
   const url = new URL(window.location.href);
   if (url.searchParams.get('v') !== VERSION) {
     url.searchParams.set('v', VERSION);
@@ -185,6 +185,10 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
         <div class="empty-state">載入中...</div>
       </div>
     </div>
+    <div class="card" id="promoSection" style="display:none;">
+      <div class="card-title">🔥 促銷 / 特別方案</div>
+      <div class="plan-grid" id="planGridPromo"></div>
+    </div>
   </div>
 
   <!-- 我的訂單 -->
@@ -297,7 +301,7 @@ async function loadAndRenderPlans() {
         name: p['方案名稱'],
         price: Number(p['單價']),
         desc: p['說明'] || '',
-        type: p['方案編號'].startsWith('L') ? 'long' : 'short'
+        type: p['方案編號'].startsWith('S') ? 'short' : p['方案編號'].startsWith('L') ? 'long' : 'promo'
       }));
       renderPlans(plans);
     } else {
@@ -312,9 +316,16 @@ async function loadAndRenderPlans() {
 function renderPlans(plans) {
   const short = plans.filter(p => p.type === 'short');
   const long = plans.filter(p => p.type === 'long');
+  const promo = plans.filter(p => p.type === 'promo');
   document.getElementById('planGridShort').innerHTML = short.length ? short.map(planCard).join('') : '<div class="empty-state">目前無短線方案</div>';
   document.getElementById('planGridLong').innerHTML = long.length ? long.map(planCard).join('') : '<div class="empty-state">目前無長線方案</div>';
-  // 更新全域方案供購物車使用
+  const promoSection = document.getElementById('promoSection');
+  if (promo.length) {
+    promoSection.style.display = 'block';
+    document.getElementById('planGridPromo').innerHTML = promo.map(planCard).join('');
+  } else {
+    promoSection.style.display = 'none';
+  }
   window._currentPlans = plans;
 }
 
