@@ -134,6 +134,22 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-text { color: #fff; font-size: 14px; font-weight: 700; }
 .empty-state { text-align: center; padding: 40px 20px; color: var(--subtext); font-size: 14px; }
+
+/* ── 管理員 ── */
+.admin-order-item { background: #fff8ee; border: 1.5px solid var(--light-brown); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+.admin-order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.admin-order-agent { font-size: 11px; font-weight: 800; color: var(--brown); margin-bottom: 2px; }
+.admin-order-plan { font-size: 13px; font-weight: 800; color: var(--text); }
+.admin-order-detail { font-size: 12px; color: var(--subtext); line-height: 1.8; margin-bottom: 8px; }
+.admin-order-total { font-size: 15px; font-weight: 900; color: var(--brown); }
+.confirm-btn { background: var(--success); color: #fff; border: none; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
+.plan-manage-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--border); font-size: 13px; color: var(--text); }
+.plan-manage-item:last-child { border-bottom: none; }
+.plan-manage-left { flex: 1; }
+.plan-manage-id { font-size: 10px; color: var(--subtext); margin-bottom: 2px; }
+.plan-manage-name { font-weight: 700; }
+.plan-manage-price { color: var(--brown); font-weight: 800; margin: 0 12px; }
+.delist-btn { background: #fce8e6; color: var(--error); border: 1px solid #f0b0a0; border-radius: 8px; padding: 5px 12px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
 </style>
 </head>
 <body>
@@ -193,12 +209,88 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
     </div>
   </div>
 
+  <div class="tabs" id="mainTabs">
+    <div class="tab active" id="tab-order" onclick="switchTab('order')">📦 方案選購</div>
+    <div class="tab" id="tab-records" onclick="switchTab('records')">📋 我的訂單</div>
+    <div class="tab" id="tab-admin" onclick="switchTab('admin')" style="display:none;">⚙️ 管理</div>
+  </div>
+
+  <!-- 方案選購 -->
+  <div class="content" id="tabOrder">
+    <div class="card">
+      <div class="card-title">✈️ 短線方案</div>
+      <div class="plan-grid" id="planGridShort"><div class="empty-state">載入中...</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🌏 長線方案</div>
+      <div class="plan-grid" id="planGridLong"><div class="empty-state">載入中...</div></div>
+    </div>
+    <div class="card" id="promoSection" style="display:none;">
+      <div class="card-title">🔥 促銷 / 特別方案</div>
+      <div class="plan-grid" id="planGridPromo"></div>
+    </div>
+  </div>
+
   <!-- 我的訂單 -->
   <div class="content" id="tabRecords" style="display:none;">
     <div class="card">
       <div class="card-title">📋 我的訂單紀錄</div>
       <div id="orderList"><div class="empty-state">載入中...</div></div>
     </div>
+  </div>
+
+  <!-- 管理員頁面 -->
+  <div class="content" id="tabAdmin" style="display:none;">
+
+    <!-- 所有訂單 -->
+    <div class="card">
+      <div class="card-title">📋 所有訂單</div>
+      <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;">
+        <select class="cart-input" id="filterAgent" onchange="loadAllOrders()" style="height:36px;font-size:13px;flex:1;">
+          <option value="">全部業務</option>
+          <option value="A238">A238</option>
+          <option value="S999">S999</option>
+          <option value="J168">J168</option>
+          <option value="A118">A118</option>
+          <option value="H248">H248</option>
+        </select>
+        <select class="cart-input" id="filterStatus" onchange="loadAllOrders()" style="height:36px;font-size:13px;flex:1;">
+          <option value="">全部狀態</option>
+          <option value="待確認">待確認</option>
+          <option value="已確認">已確認</option>
+        </select>
+      </div>
+      <div id="allOrderList"><div class="empty-state">載入中...</div></div>
+    </div>
+
+    <!-- 新增方案 -->
+    <div class="card">
+      <div class="card-title">➕ 新增方案</div>
+      <div class="cart-field">
+        <label class="cart-field-label">方案編號</label>
+        <input class="cart-input" id="newPlanId" type="text" placeholder="例：P-001、0927A-EC">
+      </div>
+      <div class="cart-field">
+        <label class="cart-field-label">方案名稱</label>
+        <input class="cart-input" id="newPlanName" type="text" placeholder="例：中秋特惠經濟艙 × 1人">
+      </div>
+      <div class="cart-field">
+        <label class="cart-field-label">單價</label>
+        <input class="cart-input" id="newPlanPrice" type="number" placeholder="例：5500">
+      </div>
+      <div class="cart-field">
+        <label class="cart-field-label">說明</label>
+        <input class="cart-input" id="newPlanDesc" type="text" placeholder="例：限時促銷，效期2026/12/31">
+      </div>
+      <button class="checkout-btn" style="margin-top:8px;" onclick="addNewPlan()">➕ 新增方案</button>
+    </div>
+
+    <!-- 方案管理 -->
+    <div class="card">
+      <div class="card-title">📦 方案管理</div>
+      <div id="adminPlanList"><div class="empty-state">載入中...</div></div>
+    </div>
+
   </div>
 </div>
 
@@ -289,6 +381,10 @@ function showMain() {
   document.getElementById('mainPage').style.display = 'block';
   document.getElementById('cartFab').style.display = 'flex';
   document.getElementById('agentLabel').textContent = `${currentAgent.id} · ${currentAgent.name}`;
+  // 管理員顯示管理Tab
+  if (currentAgent.id === 'ADMIN') {
+    document.getElementById('tab-admin').style.display = 'block';
+  }
   loadAndRenderPlans();
 }
 
@@ -522,9 +618,141 @@ async function loadOrders() {
 function switchTab(tab) {
   document.getElementById('tabOrder').style.display = tab === 'order' ? 'block' : 'none';
   document.getElementById('tabRecords').style.display = tab === 'records' ? 'block' : 'none';
+  document.getElementById('tabAdmin').style.display = tab === 'admin' ? 'block' : 'none';
   document.getElementById('tab-order').classList.toggle('active', tab === 'order');
   document.getElementById('tab-records').classList.toggle('active', tab === 'records');
+  document.getElementById('tab-admin').classList.toggle('active', tab === 'admin');
   if (tab === 'records') loadOrders();
+  if (tab === 'admin') { loadAllOrders(); loadAdminPlans(); }
+}
+
+// ── 管理員：所有訂單 ──
+async function loadAllOrders() {
+  document.getElementById('allOrderList').innerHTML = '<div class="empty-state">載入中...</div>';
+  const agentFilter = document.getElementById('filterAgent').value;
+  const statusFilter = document.getElementById('filterStatus').value;
+  try {
+    const res = await fetch(APPS_SCRIPT_URL + `?type=getAllOrders`);
+    const data = await res.json();
+    let orders = (data.orders || []).reverse();
+    if (agentFilter) orders = orders.filter(o => o['業務編號'] === agentFilter);
+    if (statusFilter) orders = orders.filter(o => (o['狀態'] || '待確認') === statusFilter);
+    if (!orders.length) {
+      document.getElementById('allOrderList').innerHTML = '<div class="empty-state">沒有訂單紀錄</div>';
+      return;
+    }
+    document.getElementById('allOrderList').innerHTML = orders.map((o, i) => `
+      <div class="admin-order-item">
+        <div class="admin-order-header">
+          <div>
+            <div class="admin-order-agent">業務：${o['業務編號'] || ''}</div>
+            <div class="admin-order-plan">${o['方案名稱'] || ''}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+            <div class="order-status status-${o['狀態'] === '已確認' ? 'confirmed' : 'pending'}">${o['狀態'] || '待確認'}</div>
+            ${o['狀態'] !== '已確認' ? `<button class="confirm-btn" onclick="confirmOrder(${o['_row']})">✅ 確認</button>` : ''}
+          </div>
+        </div>
+        <div class="admin-order-detail">
+          🕐 ${o['時間'] || ''}<br>
+          🔢 ${o['組數'] || ''}組${o['客戶姓名'] ? ` · 👤 ${o['客戶姓名']}` : ''}${o['備註'] ? ` · 📝 ${o['備註']}` : ''}
+        </div>
+        <div class="admin-order-total">$${Number(o['總金額'] || 0).toLocaleString()}</div>
+      </div>
+    `).join('');
+  } catch(e) {
+    document.getElementById('allOrderList').innerHTML = '<div class="empty-state">載入失敗</div>';
+  }
+}
+
+// ── 確認訂單 ──
+async function confirmOrder(row) {
+  showLoading('確認訂單中...');
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'confirmOrder', row })
+    });
+    hideLoading();
+    loadAllOrders();
+  } catch(e) {
+    hideLoading();
+    alert('確認失敗，請稍後再試');
+  }
+}
+
+// ── 管理員：方案管理 ──
+async function loadAdminPlans() {
+  document.getElementById('adminPlanList').innerHTML = '<div class="empty-state">載入中...</div>';
+  try {
+    const res = await fetch(APPS_SCRIPT_URL + '?type=getAllPlans');
+    const data = await res.json();
+    const plans = data.plans || [];
+    if (!plans.length) { document.getElementById('adminPlanList').innerHTML = '<div class="empty-state">沒有方案</div>'; return; }
+    document.getElementById('adminPlanList').innerHTML = plans.map(p => `
+      <div class="plan-manage-item">
+        <div class="plan-manage-left">
+          <div class="plan-manage-id">${p['方案編號']}</div>
+          <div class="plan-manage-name">${p['方案名稱']}</div>
+        </div>
+        <div class="plan-manage-price">$${Number(p['單價']).toLocaleString()}</div>
+        <button class="delist-btn" onclick="togglePlan('${p['方案編號']}', '${p['狀態']}')">${p['狀態'] === '上架' ? '下架' : '上架'}</button>
+      </div>
+    `).join('');
+  } catch(e) {
+    document.getElementById('adminPlanList').innerHTML = '<div class="empty-state">載入失敗</div>';
+  }
+}
+
+// ── 新增方案 ──
+async function addNewPlan() {
+  const id = document.getElementById('newPlanId').value.trim();
+  const name = document.getElementById('newPlanName').value.trim();
+  const price = document.getElementById('newPlanPrice').value.trim();
+  const desc = document.getElementById('newPlanDesc').value.trim();
+  if (!id || !name || !price) { alert('請填寫方案編號、名稱和單價！'); return; }
+  showLoading('新增方案中...');
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'addPlan', id, name, price: Number(price), desc })
+    });
+    hideLoading();
+    document.getElementById('newPlanId').value = '';
+    document.getElementById('newPlanName').value = '';
+    document.getElementById('newPlanPrice').value = '';
+    document.getElementById('newPlanDesc').value = '';
+    alert('✅ 方案新增成功！');
+    loadAdminPlans();
+    loadAndRenderPlans();
+  } catch(e) {
+    hideLoading();
+    alert('新增失敗，請稍後再試');
+  }
+}
+
+// ── 上架/下架方案 ──
+async function togglePlan(planId, currentStatus) {
+  const newStatus = currentStatus === '上架' ? '下架' : '上架';
+  showLoading('更新中...');
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'togglePlan', planId, status: newStatus })
+    });
+    hideLoading();
+    loadAdminPlans();
+    loadAndRenderPlans();
+  } catch(e) {
+    hideLoading();
+    alert('更新失敗，請稍後再試');
+  }
 }
 
 function showLoading(text) { document.getElementById('loadingText').textContent = text; document.getElementById('loadingOverlay').classList.add('show'); }
