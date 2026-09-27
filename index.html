@@ -5,11 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <script>
-  const VERSION = '5';
-  const url = new URL(window.location.href);
-  if (url.searchParams.get('v') !== VERSION) {
-    url.searchParams.set('v', VERSION);
-    window.location.replace(url.toString());
+  // 自動清除快取
+  const _ts = new URL(window.location.href).searchParams.get('_ts');
+  const _now = Date.now().toString().slice(0, 8);
+  if (_ts !== _now) {
+    const _url = new URL(window.location.href);
+    _url.searchParams.set('_ts', _now);
+    window.location.replace(_url.toString());
   }
 </script>
 <title>業務下單系統 — FlyLight Travel Lab</title>
@@ -467,7 +469,7 @@ async function checkout() {
 
   // LINE 通知（整筆）
   const itemLines = cart.map(c => `  • ${c.plan.id} ${c.plan.name} × ${c.qty} 組 = $${(c.plan.price * c.qty).toLocaleString()}${c.note ? ` (${c.note})` : ''}`).join('\n');
-  const msg = `📦 新訂單通知\n━━━━━━━━━━━━━\n🧑‍💼 業務：${currentAgent.id} ${currentAgent.name}\n\n${itemLines}\n\n💰 訂單總金額：$${total.toLocaleString()}${clientName ? `\n👤 客戶：${clientName}` : ''}${remarks ? `\n📝 備註：${remarks}` : ''}`;
+  const msg = `📦 新訂單通知\n━━━━━━━━━━━━━\n🧑‍💼 業務：${currentAgent.id}\n\n${itemLines}\n\n💰 訂單總金額：$${total.toLocaleString()}${clientName ? `\n👤 客戶：${clientName}` : ''}${remarks ? `\n📝 備註：${remarks}` : ''}`;
 
   await fetch(NOTIFY_URL, {
     method: 'POST',
