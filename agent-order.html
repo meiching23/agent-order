@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<script>
+  const VERSION = '1';
+  const url = new URL(window.location.href);
+  if (url.searchParams.get('v') !== VERSION) {
+    url.searchParams.set('v', VERSION);
+    window.location.replace(url.toString());
+  }
+</script>
+<title>業務下單系統 — FlyLight Travel Lab</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+* { margin:0; padding:0; box-sizing:border-box; }
+html { overflow-x: hidden; }
+
+:root {
+  --brown: #c87830;
+  --dark-brown: #7a4a18;
+  --light-brown: #e8c898;
+  --cream: #fdf8f0;
+  --bg: #ede5d8;
+  --text: #3a2008;
+  --subtext: #9a6030;
+  --border: #e8d8c0;
+  --success: #5a8a40;
+  --error: #c84030;
+}
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  padding: 0 0 40px;
+}
+
+/* ── 登入頁 ── */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.login-card {
+  background: var(--cream);
+  border-radius: 20px;
+  padding: 36px 28px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 20px 60px rgba(120,80,30,0.15);
+}
+.login-logo { text-align: center; margin-bottom: 24px; }
+.login-logo-icon { font-size: 48px; margin-bottom: 8px; }
+.login-logo-name { font-size: 16px; font-weight: 900; color: var(--dark-brown); letter-spacing: 1px; }
+.login-logo-sub { font-size: 11px; color: var(--subtext); margin-top: 2px; }
+.login-title { font-size: 14px; font-weight: 800; color: var(--dark-brown); margin-bottom: 20px; text-align: center; }
+.login-field { margin-bottom: 16px; }
+.login-label { font-size: 11px; font-weight: 700; color: var(--subtext); letter-spacing: 1px; margin-bottom: 6px; display: block; }
+.login-input {
+  width: 100%; height: 46px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: #fff8ee;
+  padding: 0 16px;
+  font-size: 16px; color: var(--text);
+  font-family: 'Noto Sans TC', sans-serif;
+  outline: none;
+}
+.login-input:focus { border-color: var(--brown); }
+.login-btn {
+  width: 100%; height: 48px;
+  background: var(--brown); color: #fff8ee;
+  border: none; border-radius: 12px;
+  font-size: 15px; font-weight: 800;
+  cursor: pointer;
+  font-family: 'Noto Sans TC', sans-serif;
+  letter-spacing: 1px;
+  margin-top: 8px;
+}
+.login-error { color: var(--error); font-size: 12px; text-align: center; margin-top: 10px; display: none; }
+
+/* ── 主頁面 ── */
+.main-page { display: none; }
+
+.top-bar {
+  background: var(--brown);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(100,50,0,0.2);
+}
+.top-bar-left { }
+.top-bar-brand { color: #fff8ee; font-size: 14px; font-weight: 900; }
+.top-bar-agent { color: rgba(255,248,238,0.7); font-size: 11px; margin-top: 2px; }
+.logout-btn {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff8ee; font-size: 12px; font-weight: 700;
+  padding: 6px 14px; border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+/* ── Tabs ── */
+.tabs {
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  padding: 0 20px;
+}
+.tab {
+  padding: 14px 20px;
+  font-size: 13px; font-weight: 700;
+  color: var(--subtext);
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  white-space: nowrap;
+}
+.tab.active { color: var(--brown); border-bottom-color: var(--brown); }
+
+.content { padding: 16px 20px; max-width: 640px; margin: 0 auto; }
+
+/* ── Card ── */
+.card {
+  background: var(--cream);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 14px;
+  border: 1.5px solid var(--light-brown);
+}
+.card-title {
+  font-size: 13px; font-weight: 800;
+  color: var(--dark-brown); letter-spacing: 1px;
+  margin-bottom: 14px; padding-bottom: 10px;
+  border-bottom: 2px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ── 方案卡片 ── */
+.plan-grid { display: flex; flex-direction: column; gap: 10px; }
+.plan-card {
+  background: #fff8ee;
+  border: 1.5px solid var(--light-brown);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.plan-card:hover { border-color: var(--brown); background: #fef5e6; }
+.plan-card.selected { border-color: var(--brown); background: #fef0d8; border-width: 2px; }
+.plan-left { flex: 1; }
+.plan-id { font-size: 10px; font-weight: 700; color: var(--subtext); letter-spacing: 1px; margin-bottom: 3px; }
+.plan-name { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.plan-desc { font-size: 11px; color: var(--subtext); }
+.plan-price { font-size: 18px; font-weight: 900; color: var(--brown); text-align: right; white-space: nowrap; margin-left: 12px; }
+
+/* ── 表單 ── */
+.form-field { margin-bottom: 14px; }
+.form-label { font-size: 11px; font-weight: 700; color: var(--subtext); letter-spacing: 1px; margin-bottom: 6px; display: block; }
+.form-input {
+  width: 100%; height: 44px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: #fff8ee;
+  padding: 0 14px;
+  font-size: 15px; color: var(--text);
+  font-family: 'Noto Sans TC', sans-serif;
+  outline: none;
+}
+.form-input:focus { border-color: var(--brown); }
+.form-select {
+  width: 100%; height: 44px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: #fff8ee;
+  padding: 0 14px;
+  font-size: 15px; color: var(--text);
+  font-family: 'Noto Sans TC', sans-serif;
+  outline: none; appearance: none;
+}
+
+/* ── 訂單摘要 ── */
+.order-summary {
+  background: #fef0d8;
+  border: 1.5px solid var(--light-brown);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  display: none;
+}
+.summary-row {
+  display: flex; justify-content: space-between;
+  font-size: 13px; color: var(--text);
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--border);
+}
+.summary-row:last-child { border-bottom: none; font-weight: 800; font-size: 15px; }
+.summary-value { font-weight: 700; color: var(--brown); }
+.summary-total { color: var(--dark-brown); font-size: 18px; }
+
+/* ── 送出按鈕 ── */
+.submit-btn {
+  width: 100%; height: 50px;
+  background: var(--brown); color: #fff8ee;
+  border: none; border-radius: 14px;
+  font-size: 15px; font-weight: 900;
+  cursor: pointer;
+  font-family: 'Noto Sans TC', sans-serif;
+  letter-spacing: 2px;
+}
+.submit-btn:disabled { background: #d4b080; cursor: not-allowed; }
+
+/* ── 訂單紀錄 ── */
+.order-list { display: flex; flex-direction: column; gap: 10px; }
+.order-item {
+  background: #fff8ee;
+  border: 1.5px solid var(--light-brown);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.order-plan { font-size: 14px; font-weight: 800; color: var(--text); }
+.order-status {
+  font-size: 10px; font-weight: 700;
+  padding: 3px 10px; border-radius: 10px;
+}
+.status-pending { background: #fff8ee; color: var(--subtext); border: 1px solid var(--light-brown); }
+.status-confirmed { background: #e8f5e0; color: var(--success); border: 1px solid #b0d890; }
+.order-detail { font-size: 12px; color: var(--subtext); line-height: 1.8; }
+.order-total { font-size: 16px; font-weight: 900; color: var(--brown); margin-top: 6px; }
+
+/* ── Loading ── */
+.loading-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 200;
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 16px;
+}
+.loading-overlay.show { display: flex; }
+.loading-spinner {
+  width: 44px; height: 44px;
+  border: 4px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { color: #fff; font-size: 14px; font-weight: 700; }
+
+.empty-state { text-align: center; padding: 40px 20px; color: var(--subtext); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<!-- 登入頁 -->
+<div class="login-page" id="loginPage">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">✈️</div>
+      <div class="login-logo-name">FlyLight Travel Lab</div>
+      <div class="login-logo-sub">業務下單系統</div>
+    </div>
+    <div class="login-title">請輸入業務編號登入</div>
+    <div class="login-field">
+      <label class="login-label">業務編號</label>
+      <input class="login-input" id="agentInput" type="text" placeholder="例：A001" maxlength="10">
+    </div>
+    <button class="login-btn" onclick="login()">登入</button>
+    <div class="login-error" id="loginError">業務編號不正確，請重新輸入</div>
+  </div>
+</div>
+
+<!-- 主頁面 -->
+<div class="main-page" id="mainPage">
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <div class="top-bar-brand">FlyLight Travel Lab</div>
+      <div class="top-bar-agent" id="agentLabel"></div>
+    </div>
+    <button class="logout-btn" onclick="logout()">登出</button>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('order')">📦 下新訂單</div>
+    <div class="tab" onclick="switchTab('records')">📋 我的訂單</div>
+  </div>
+
+  <!-- 下新訂單 -->
+  <div class="content" id="tabOrder">
+    <div class="card">
+      <div class="card-title">📦 選擇方案</div>
+      <div class="plan-grid" id="planGrid">
+        <div class="empty-state">載入方案中...</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📝 訂單資訊</div>
+      <div class="form-field">
+        <label class="form-label">組數</label>
+        <select class="form-select" id="quantitySelect" onchange="updateSummary()">
+          <option value="1">1 組</option>
+          <option value="2">2 組</option>
+          <option value="3">3 組</option>
+          <option value="4">4 組</option>
+          <option value="5">5 組</option>
+          <option value="6">6 組</option>
+          <option value="7">7 組</option>
+          <option value="8">8 組</option>
+          <option value="9">9 組</option>
+          <option value="10">10 組</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">客戶姓名（選填）</label>
+        <input class="form-input" id="clientName" type="text" placeholder="客戶姓名">
+      </div>
+      <div class="form-field">
+        <label class="form-label">備註（選填）</label>
+        <input class="form-input" id="orderRemarks" type="text" placeholder="特殊需求或備註">
+      </div>
+    </div>
+
+    <div class="order-summary" id="orderSummary">
+      <div class="summary-row">
+        <div>方案</div>
+        <div class="summary-value" id="summaryPlan">—</div>
+      </div>
+      <div class="summary-row">
+        <div>單價</div>
+        <div class="summary-value" id="summaryPrice">—</div>
+      </div>
+      <div class="summary-row">
+        <div>組數</div>
+        <div class="summary-value" id="summaryQty">—</div>
+      </div>
+      <div class="summary-row">
+        <div>總金額</div>
+        <div class="summary-value summary-total" id="summaryTotal">—</div>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="submitOrder()">✅ 確認下單</button>
+  </div>
+
+  <!-- 我的訂單 -->
+  <div class="content" id="tabRecords" style="display:none;">
+    <div class="card">
+      <div class="card-title">📋 我的訂單紀錄</div>
+      <div class="order-list" id="orderList">
+        <div class="empty-state">載入中...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loadingText">處理中...</div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZ_INF8CS_rsn6x98_QPlcJCOLT-K0FU5s9lDpgX2Dj_zcGqJZM-7IiwpG2T60D4tRPA/exec';
+const NOTIFY_URL = 'https://ticket-api-kohl.vercel.app/api/notify';
+
+// 業務清單（你可以新增）
+const AGENTS = {
+  'A238': '業務 A238',
+  'S999': '業務 S999',
+  'J168': '業務 J168',
+  'A118': '業務 A118',
+  'H248': '業務 H248',
+  'ADMIN': '管理員（Meiching）',
+};
+
+let currentAgent = null;
+let selectedPlan = null;
+let plans = [];
+
+// ── 登入 ──
+function login() {
+  const id = document.getElementById('agentInput').value.trim().toUpperCase();
+  if (AGENTS[id]) {
+    currentAgent = { id, name: AGENTS[id] };
+    localStorage.setItem('flt_agent', JSON.stringify(currentAgent));
+    showMain();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+
+function logout() {
+  localStorage.removeItem('flt_agent');
+  currentAgent = null;
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('mainPage').style.display = 'none';
+  document.getElementById('agentInput').value = '';
+}
+
+function showMain() {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('mainPage').style.display = 'block';
+  document.getElementById('agentLabel').textContent = `${currentAgent.id} · ${currentAgent.name}`;
+  loadPlans();
+}
+
+// ── 方案 ──
+async function loadPlans() {
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'getPlans' })
+    });
+    const data = await res.json();
+    plans = data.plans || getDefaultPlans();
+  } catch(e) {
+    plans = getDefaultPlans();
+  }
+  renderPlans();
+}
+
+function getDefaultPlans() {
+  return [
+    { 方案編號: 'S-EC',    方案名稱: '短線經濟艙 × 1人',      單價: 5500,  說明: '32個短線航點任選，出發前再選' },
+    { 方案編號: 'S-BU',    方案名稱: '短線商務艙 × 1人',      單價: 12500, 說明: '32個短線航點任選，出發前再選' },
+    { 方案編號: 'S-EC4',   方案名稱: '短線經濟艙 × 4人組',    單價: 20000, 說明: '32個短線航點任選，出發前再選' },
+    { 方案編號: 'S-BU4',   方案名稱: '短線商務艙 × 4人組',    單價: 48000, 說明: '32個短線航點任選，出發前再選' },
+    { 方案編號: 'L-EU-EC', 方案名稱: '歐洲線經濟艙 × 1人',    單價: 11000, 說明: '20個歐洲航點任選，出發前再選' },
+    { 方案編號: 'L-EU-BU', 方案名稱: '歐洲線商務艙 × 1人',    單價: 28500, 說明: '20個歐洲航點任選，出發前再選' },
+    { 方案編號: 'L-OT-EC', 方案名稱: '非歐洲長線經濟艙 × 1人', 單價: 9900, 說明: '9個非歐洲航點任選，出發前再選' },
+    { 方案編號: 'L-OT-BU', 方案名稱: '非歐洲長線商務艙 × 1人', 單價: 25000, 說明: '9個非歐洲航點任選，出發前再選' },
+  ];
+}
+
+function renderPlans() {
+  const grid = document.getElementById('planGrid');
+  if (!plans.length) { grid.innerHTML = '<div class="empty-state">目前沒有可用方案</div>'; return; }
+  grid.innerHTML = plans.map(p => `
+    <div class="plan-card" id="plan-${p['方案編號']}" onclick="selectPlan('${p['方案編號']}')">
+      <div class="plan-left">
+        <div class="plan-id">${p['方案編號']}</div>
+        <div class="plan-name">${p['方案名稱']}</div>
+        <div class="plan-desc">${p['說明'] || ''}</div>
+      </div>
+      <div class="plan-price">$${Number(p['單價']).toLocaleString()}</div>
+    </div>
+  `).join('');
+}
+
+function selectPlan(id) {
+  document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`plan-${id}`)?.classList.add('selected');
+  selectedPlan = plans.find(p => p['方案編號'] === id);
+  updateSummary();
+}
+
+function updateSummary() {
+  if (!selectedPlan) return;
+  const qty = parseInt(document.getElementById('quantitySelect').value);
+  const total = selectedPlan['單價'] * qty;
+  document.getElementById('summaryPlan').textContent = selectedPlan['方案名稱'];
+  document.getElementById('summaryPrice').textContent = `$${Number(selectedPlan['單價']).toLocaleString()}`;
+  document.getElementById('summaryQty').textContent = `${qty} 組`;
+  document.getElementById('summaryTotal').textContent = `$${total.toLocaleString()}`;
+  document.getElementById('orderSummary').style.display = 'block';
+}
+
+// ── 下單 ──
+async function submitOrder() {
+  if (!selectedPlan) { alert('請選擇方案！'); return; }
+  const qty = parseInt(document.getElementById('quantitySelect').value);
+  const total = selectedPlan['單價'] * qty;
+
+  showLoading('送出訂單中...');
+
+  const order = {
+    type: 'order',
+    timestamp: new Date().toISOString(),
+    agentId: currentAgent.id,
+    agentName: currentAgent.name,
+    planId: selectedPlan['方案編號'],
+    planName: selectedPlan['方案名稱'],
+    quantity: qty,
+    total,
+    clientName: document.getElementById('clientName').value.trim(),
+    remarks: document.getElementById('orderRemarks').value.trim(),
+  };
+
+  try {
+    // 存 Google Sheet
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order)
+    });
+
+    // LINE 通知
+    const msg = `📦 新訂單通知\n━━━━━━━━━━━━━\n🧑‍💼 業務：${currentAgent.id} ${currentAgent.name}\n📋 方案：${order.planId} ${order.planName}\n🔢 組數：${qty} 組\n💰 總金額：$${total.toLocaleString()}\n${order.clientName ? `👤 客戶：${order.clientName}\n` : ''}${order.remarks ? `📝 備註：${order.remarks}` : ''}`;
+
+    await fetch(NOTIFY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'order', message: msg })
+    });
+
+    hideLoading();
+    alert(`✅ 訂單送出成功！\n\n方案：${order.planName}\n組數：${qty} 組\n總金額：$${total.toLocaleString()}`);
+
+    // 重置
+    selectedPlan = null;
+    document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('clientName').value = '';
+    document.getElementById('orderRemarks').value = '';
+    document.getElementById('quantitySelect').value = '1';
+    document.getElementById('orderSummary').style.display = 'none';
+
+  } catch(e) {
+    hideLoading();
+    alert('送出失敗，請稍後再試！');
+  }
+}
+
+// ── 訂單紀錄 ──
+async function loadOrders() {
+  document.getElementById('orderList').innerHTML = '<div class="empty-state">載入中...</div>';
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'getOrders', agentId: currentAgent.id })
+    });
+    const data = await res.json();
+    const orders = data.orders || [];
+    if (!orders.length) {
+      document.getElementById('orderList').innerHTML = '<div class="empty-state">還沒有訂單紀錄 📦</div>';
+      return;
+    }
+    document.getElementById('orderList').innerHTML = orders.reverse().map(o => `
+      <div class="order-item">
+        <div class="order-header">
+          <div class="order-plan">${o['方案名稱'] || o['planName']}</div>
+          <div class="order-status status-${o['狀態'] === '已確認' ? 'confirmed' : 'pending'}">${o['狀態'] || '待確認'}</div>
+        </div>
+        <div class="order-detail">
+          🕐 ${o['時間'] || ''}<br>
+          🔢 ${o['組數'] || ''}組${o['客戶姓名'] ? ` · 👤 ${o['客戶姓名']}` : ''}${o['備註'] ? ` · 📝 ${o['備註']}` : ''}
+        </div>
+        <div class="order-total">$${Number(o['總金額'] || 0).toLocaleString()}</div>
+      </div>
+    `).join('');
+  } catch(e) {
+    document.getElementById('orderList').innerHTML = '<div class="empty-state">載入失敗，請稍後再試</div>';
+  }
+}
+
+// ── Tab 切換 ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tabOrder').style.display = tab === 'order' ? 'block' : 'none';
+  document.getElementById('tabRecords').style.display = tab === 'records' ? 'block' : 'none';
+  event.target.classList.add('active');
+  if (tab === 'records') loadOrders();
+}
+
+function showLoading(text) {
+  document.getElementById('loadingText').textContent = text;
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('show');
+}
+
+// ── 初始化 ──
+const saved = localStorage.getItem('flt_agent');
+if (saved) {
+  currentAgent = JSON.parse(saved);
+  showMain();
+}
+
+document.getElementById('agentInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') login();
+});
+</script>
+</body>
+</html>
