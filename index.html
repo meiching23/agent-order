@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <script>
-  const VERSION = '1';
+  const VERSION = '3';
   const url = new URL(window.location.href);
   if (url.searchParams.get('v') !== VERSION) {
     url.searchParams.set('v', VERSION);
@@ -31,29 +31,11 @@ html { overflow-x: hidden; }
   --error: #c84030;
 }
 
-body {
-  font-family: 'Noto Sans TC', sans-serif;
-  background: var(--bg);
-  min-height: 100vh;
-  padding: 0 0 40px;
-}
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-height: 100vh; padding: 0 0 80px; }
 
 /* ── 登入頁 ── */
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-.login-card {
-  background: var(--cream);
-  border-radius: 20px;
-  padding: 36px 28px;
-  width: 100%;
-  max-width: 360px;
-  box-shadow: 0 20px 60px rgba(120,80,30,0.15);
-}
+.login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.login-card { background: var(--cream); border-radius: 20px; padding: 36px 28px; width: 100%; max-width: 360px; box-shadow: 0 20px 60px rgba(120,80,30,0.15); }
 .login-logo { text-align: center; margin-bottom: 24px; }
 .login-logo-icon { font-size: 48px; margin-bottom: 8px; }
 .login-logo-name { font-size: 16px; font-weight: 900; color: var(--dark-brown); letter-spacing: 1px; }
@@ -61,200 +43,94 @@ body {
 .login-title { font-size: 14px; font-weight: 800; color: var(--dark-brown); margin-bottom: 20px; text-align: center; }
 .login-field { margin-bottom: 16px; }
 .login-label { font-size: 11px; font-weight: 700; color: var(--subtext); letter-spacing: 1px; margin-bottom: 6px; display: block; }
-.login-input {
-  width: 100%; height: 46px;
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  background: #fff8ee;
-  padding: 0 16px;
-  font-size: 16px; color: var(--text);
-  font-family: 'Noto Sans TC', sans-serif;
-  outline: none;
-}
+.login-input { width: 100%; height: 46px; border: 1.5px solid var(--border); border-radius: 12px; background: #fff8ee; padding: 0 16px; font-size: 16px; color: var(--text); font-family: 'Noto Sans TC', sans-serif; outline: none; }
 .login-input:focus { border-color: var(--brown); }
-.login-btn {
-  width: 100%; height: 48px;
-  background: var(--brown); color: #fff8ee;
-  border: none; border-radius: 12px;
-  font-size: 15px; font-weight: 800;
-  cursor: pointer;
-  font-family: 'Noto Sans TC', sans-serif;
-  letter-spacing: 1px;
-  margin-top: 8px;
-}
+.login-btn { width: 100%; height: 48px; background: var(--brown); color: #fff8ee; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; letter-spacing: 1px; margin-top: 8px; }
 .login-error { color: var(--error); font-size: 12px; text-align: center; margin-top: 10px; display: none; }
 
-/* ── 主頁面 ── */
+/* ── Top Bar ── */
 .main-page { display: none; }
-
-.top-bar {
-  background: var(--brown);
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 12px rgba(100,50,0,0.2);
-}
-.top-bar-left { }
+.top-bar { background: var(--brown); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(100,50,0,0.2); }
 .top-bar-brand { color: #fff8ee; font-size: 14px; font-weight: 900; }
 .top-bar-agent { color: rgba(255,248,238,0.7); font-size: 11px; margin-top: 2px; }
-.logout-btn {
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.3);
-  color: #fff8ee; font-size: 12px; font-weight: 700;
-  padding: 6px 14px; border-radius: 20px;
-  cursor: pointer;
-  font-family: 'Noto Sans TC', sans-serif;
-}
+.top-bar-right { display: flex; align-items: center; gap: 10px; }
+.cart-btn { position: relative; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff8ee; font-size: 20px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.cart-badge { position: absolute; top: -4px; right: -4px; background: #e84030; color: #fff; font-size: 10px; font-weight: 900; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; display: none; }
+.logout-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff8ee; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
 
 /* ── Tabs ── */
-.tabs {
-  background: var(--cream);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  padding: 0 20px;
-}
-.tab {
-  padding: 14px 20px;
-  font-size: 13px; font-weight: 700;
-  color: var(--subtext);
-  cursor: pointer;
-  border-bottom: 2.5px solid transparent;
-  white-space: nowrap;
-}
+.tabs { background: var(--cream); border-bottom: 1px solid var(--border); display: flex; padding: 0 20px; }
+.tab { padding: 14px 16px; font-size: 13px; font-weight: 700; color: var(--subtext); cursor: pointer; border-bottom: 2.5px solid transparent; white-space: nowrap; }
 .tab.active { color: var(--brown); border-bottom-color: var(--brown); }
 
 .content { padding: 16px 20px; max-width: 640px; margin: 0 auto; }
 
 /* ── Card ── */
-.card {
-  background: var(--cream);
-  border-radius: 16px;
-  padding: 18px;
-  margin-bottom: 14px;
-  border: 1.5px solid var(--light-brown);
-}
-.card-title {
-  font-size: 13px; font-weight: 800;
-  color: var(--dark-brown); letter-spacing: 1px;
-  margin-bottom: 14px; padding-bottom: 10px;
-  border-bottom: 2px solid var(--border);
-  display: flex; align-items: center; gap: 8px;
-}
+.card { background: var(--cream); border-radius: 16px; padding: 18px; margin-bottom: 14px; border: 1.5px solid var(--light-brown); }
+.card-title { font-size: 13px; font-weight: 800; color: var(--dark-brown); letter-spacing: 1px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 8px; }
 
 /* ── 方案卡片 ── */
 .plan-grid { display: flex; flex-direction: column; gap: 10px; }
-.plan-card {
-  background: #fff8ee;
-  border: 1.5px solid var(--light-brown);
-  border-radius: 12px;
-  padding: 14px 16px;
-  display: flex; align-items: center; justify-content: space-between;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.plan-card:hover { border-color: var(--brown); background: #fef5e6; }
-.plan-card.selected { border-color: var(--brown); background: #fef0d8; border-width: 2px; }
+.plan-card { background: #fff8ee; border: 1.5px solid var(--light-brown); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .plan-left { flex: 1; }
 .plan-id { font-size: 10px; font-weight: 700; color: var(--subtext); letter-spacing: 1px; margin-bottom: 3px; }
 .plan-name { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
 .plan-desc { font-size: 11px; color: var(--subtext); }
-.plan-price { font-size: 18px; font-weight: 900; color: var(--brown); text-align: right; white-space: nowrap; margin-left: 12px; }
+.plan-price { font-size: 16px; font-weight: 900; color: var(--brown); white-space: nowrap; }
+.add-cart-btn { background: var(--brown); color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; white-space: nowrap; flex-shrink: 0; }
+.add-cart-btn:active { background: var(--dark-brown); }
 
-/* ── 表單 ── */
-.form-field { margin-bottom: 14px; }
-.form-label { font-size: 11px; font-weight: 700; color: var(--subtext); letter-spacing: 1px; margin-bottom: 6px; display: block; }
-.form-input {
-  width: 100%; height: 44px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  background: #fff8ee;
-  padding: 0 14px;
-  font-size: 15px; color: var(--text);
-  font-family: 'Noto Sans TC', sans-serif;
-  outline: none;
-}
-.form-input:focus { border-color: var(--brown); }
-.form-select {
-  width: 100%; height: 44px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  background: #fff8ee;
-  padding: 0 14px;
-  font-size: 15px; color: var(--text);
-  font-family: 'Noto Sans TC', sans-serif;
-  outline: none; appearance: none;
-}
-
-/* ── 訂單摘要 ── */
-.order-summary {
-  background: #fef0d8;
-  border: 1.5px solid var(--light-brown);
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 14px;
-  display: none;
-}
-.summary-row {
-  display: flex; justify-content: space-between;
-  font-size: 13px; color: var(--text);
-  padding: 6px 0;
-  border-bottom: 1px dashed var(--border);
-}
-.summary-row:last-child { border-bottom: none; font-weight: 800; font-size: 15px; }
-.summary-value { font-weight: 700; color: var(--brown); }
-.summary-total { color: var(--dark-brown); font-size: 18px; }
-
-/* ── 送出按鈕 ── */
-.submit-btn {
-  width: 100%; height: 50px;
-  background: var(--brown); color: #fff8ee;
-  border: none; border-radius: 14px;
-  font-size: 15px; font-weight: 900;
-  cursor: pointer;
-  font-family: 'Noto Sans TC', sans-serif;
-  letter-spacing: 2px;
-}
-.submit-btn:disabled { background: #d4b080; cursor: not-allowed; }
+/* ── 購物車 ── */
+.cart-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; }
+.cart-overlay.show { display: block; }
+.cart-panel { position: fixed; bottom: 0; left: 0; right: 0; background: var(--cream); border-radius: 20px 20px 0 0; padding: 20px; max-height: 80vh; overflow-y: auto; z-index: 160; transform: translateY(100%); transition: transform 0.3s ease; }
+.cart-panel.show { transform: translateY(0); }
+.cart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--border); }
+.cart-title { font-size: 16px; font-weight: 900; color: var(--dark-brown); }
+.cart-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--subtext); }
+.cart-item { background: #fff8ee; border: 1.5px solid var(--light-brown); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.cart-item-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+.cart-item-name { font-size: 13px; font-weight: 800; color: var(--text); }
+.cart-item-id { font-size: 10px; color: var(--subtext); margin-top: 2px; }
+.cart-remove { background: none; border: none; color: var(--error); font-size: 16px; cursor: pointer; flex-shrink: 0; }
+.cart-item-controls { display: flex; align-items: center; justify-content: space-between; }
+.qty-controls { display: flex; align-items: center; gap: 10px; }
+.qty-btn { width: 32px; height: 32px; border-radius: 8px; border: 1.5px solid var(--light-brown); background: var(--cream); color: var(--brown); font-size: 18px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.qty-num { font-size: 16px; font-weight: 900; color: var(--text); min-width: 24px; text-align: center; }
+.cart-item-price { font-size: 16px; font-weight: 900; color: var(--brown); }
+.cart-note-field { width: 100%; margin-top: 8px; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; background: var(--cream); font-size: 12px; color: var(--text); font-family: 'Noto Sans TC', sans-serif; outline: none; resize: none; height: 36px; }
+.cart-note-field:focus { border-color: var(--brown); }
+.cart-total-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 2px solid var(--border); margin-top: 4px; }
+.cart-total-label { font-size: 14px; font-weight: 800; color: var(--text); }
+.cart-total-amount { font-size: 22px; font-weight: 900; color: var(--dark-brown); }
+.cart-fields { margin-bottom: 14px; }
+.cart-field { margin-bottom: 10px; }
+.cart-field-label { font-size: 11px; font-weight: 700; color: var(--subtext); letter-spacing: 1px; margin-bottom: 5px; display: block; }
+.cart-input { width: 100%; height: 42px; border: 1.5px solid var(--border); border-radius: 10px; background: #fff8ee; padding: 0 14px; font-size: 14px; color: var(--text); font-family: 'Noto Sans TC', sans-serif; outline: none; }
+.cart-input:focus { border-color: var(--brown); }
+.checkout-btn { width: 100%; height: 50px; background: var(--brown); color: #fff8ee; border: none; border-radius: 14px; font-size: 15px; font-weight: 900; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; letter-spacing: 2px; margin-top: 8px; }
+.cart-empty { text-align: center; padding: 30px; color: var(--subtext); font-size: 14px; }
 
 /* ── 訂單紀錄 ── */
-.order-list { display: flex; flex-direction: column; gap: 10px; }
-.order-item {
-  background: #fff8ee;
-  border: 1.5px solid var(--light-brown);
-  border-radius: 12px;
-  padding: 14px 16px;
-}
+.order-item { background: #fff8ee; border: 1.5px solid var(--light-brown); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
 .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-.order-plan { font-size: 14px; font-weight: 800; color: var(--text); }
-.order-status {
-  font-size: 10px; font-weight: 700;
-  padding: 3px 10px; border-radius: 10px;
-}
+.order-no { font-size: 11px; font-weight: 700; color: var(--subtext); margin-bottom: 4px; }
+.order-plans { font-size: 13px; font-weight: 800; color: var(--text); }
+.order-status { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 10px; flex-shrink: 0; }
 .status-pending { background: #fff8ee; color: var(--subtext); border: 1px solid var(--light-brown); }
 .status-confirmed { background: #e8f5e0; color: var(--success); border: 1px solid #b0d890; }
 .order-detail { font-size: 12px; color: var(--subtext); line-height: 1.8; }
 .order-total { font-size: 16px; font-weight: 900; color: var(--brown); margin-top: 6px; }
 
-/* ── Loading ── */
-.loading-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.5); z-index: 200;
-  align-items: center; justify-content: center;
-  flex-direction: column; gap: 16px;
-}
+/* ── 底部購物車按鈕 ── */
+.cart-fab { position: fixed; bottom: 20px; right: 20px; background: var(--brown); color: #fff; width: 56px; height: 56px; border-radius: 50%; border: none; font-size: 24px; cursor: pointer; box-shadow: 0 4px 20px rgba(120,80,30,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.cart-fab-badge { position: absolute; top: -4px; right: -4px; background: #e84030; color: #fff; font-size: 11px; font-weight: 900; width: 20px; height: 20px; border-radius: 50%; display: none; align-items: center; justify-content: center; }
+
+.loading-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
 .loading-overlay.show { display: flex; }
-.loading-spinner {
-  width: 44px; height: 44px;
-  border: 4px solid rgba(255,255,255,0.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
+.loading-spinner { width: 44px; height: 44px; border: 4px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-text { color: #fff; font-size: 14px; font-weight: 700; }
-
 .empty-state { text-align: center; padding: 40px 20px; color: var(--subtext); font-size: 14px; }
 </style>
 </head>
@@ -271,7 +147,7 @@ body {
     <div class="login-title">請輸入業務編號登入</div>
     <div class="login-field">
       <label class="login-label">業務編號</label>
-      <input class="login-input" id="agentInput" type="text" placeholder="例：A001" maxlength="10">
+      <input class="login-input" id="agentInput" type="text" placeholder="例：A238" maxlength="10">
     </div>
     <button class="login-btn" onclick="login()">登入</button>
     <div class="login-error" id="loginError">業務編號不正確，請重新輸入</div>
@@ -281,85 +157,70 @@ body {
 <!-- 主頁面 -->
 <div class="main-page" id="mainPage">
   <div class="top-bar">
-    <div class="top-bar-left">
+    <div>
       <div class="top-bar-brand">FlyLight Travel Lab</div>
       <div class="top-bar-agent" id="agentLabel"></div>
     </div>
-    <button class="logout-btn" onclick="logout()">登出</button>
+    <div class="top-bar-right">
+      <button class="logout-btn" onclick="logout()">登出</button>
+    </div>
   </div>
 
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('order')">📦 下新訂單</div>
-    <div class="tab" onclick="switchTab('records')">📋 我的訂單</div>
+    <div class="tab active" id="tab-order" onclick="switchTab('order')">📦 方案選購</div>
+    <div class="tab" id="tab-records" onclick="switchTab('records')">📋 我的訂單</div>
   </div>
 
-  <!-- 下新訂單 -->
+  <!-- 方案選購 -->
   <div class="content" id="tabOrder">
     <div class="card">
-      <div class="card-title">📦 選擇方案</div>
-      <div class="plan-grid" id="planGrid">
-        <div class="empty-state">載入方案中...</div>
+      <div class="card-title">✈️ 短線方案</div>
+      <div class="plan-grid" id="planGridShort">
+        <div class="empty-state">載入中...</div>
       </div>
     </div>
-
     <div class="card">
-      <div class="card-title">📝 訂單資訊</div>
-      <div class="form-field">
-        <label class="form-label">組數</label>
-        <select class="form-select" id="quantitySelect" onchange="updateSummary()">
-          <option value="1">1 組</option>
-          <option value="2">2 組</option>
-          <option value="3">3 組</option>
-          <option value="4">4 組</option>
-          <option value="5">5 組</option>
-          <option value="6">6 組</option>
-          <option value="7">7 組</option>
-          <option value="8">8 組</option>
-          <option value="9">9 組</option>
-          <option value="10">10 組</option>
-        </select>
-      </div>
-      <div class="form-field">
-        <label class="form-label">客戶姓名（選填）</label>
-        <input class="form-input" id="clientName" type="text" placeholder="客戶姓名">
-      </div>
-      <div class="form-field">
-        <label class="form-label">備註（選填）</label>
-        <input class="form-input" id="orderRemarks" type="text" placeholder="特殊需求或備註">
+      <div class="card-title">🌏 長線方案</div>
+      <div class="plan-grid" id="planGridLong">
+        <div class="empty-state">載入中...</div>
       </div>
     </div>
-
-    <div class="order-summary" id="orderSummary">
-      <div class="summary-row">
-        <div>方案</div>
-        <div class="summary-value" id="summaryPlan">—</div>
-      </div>
-      <div class="summary-row">
-        <div>單價</div>
-        <div class="summary-value" id="summaryPrice">—</div>
-      </div>
-      <div class="summary-row">
-        <div>組數</div>
-        <div class="summary-value" id="summaryQty">—</div>
-      </div>
-      <div class="summary-row">
-        <div>總金額</div>
-        <div class="summary-value summary-total" id="summaryTotal">—</div>
-      </div>
-    </div>
-
-    <button class="submit-btn" onclick="submitOrder()">✅ 確認下單</button>
   </div>
 
   <!-- 我的訂單 -->
   <div class="content" id="tabRecords" style="display:none;">
     <div class="card">
       <div class="card-title">📋 我的訂單紀錄</div>
-      <div class="order-list" id="orderList">
-        <div class="empty-state">載入中...</div>
-      </div>
+      <div id="orderList"><div class="empty-state">載入中...</div></div>
     </div>
   </div>
+</div>
+
+<!-- 購物車 FAB -->
+<button class="cart-fab" id="cartFab" onclick="openCart()" style="display:none;">
+  🛒
+  <div class="cart-fab-badge" id="cartFabBadge"></div>
+</button>
+
+<!-- 購物車面板 -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <div class="cart-title">🛒 購物車</div>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div id="cartItems"></div>
+  <div class="cart-fields">
+    <div class="cart-field">
+      <label class="cart-field-label">客戶姓名（選填）</label>
+      <input class="cart-input" id="clientName" type="text" placeholder="客戶姓名">
+    </div>
+    <div class="cart-field">
+      <label class="cart-field-label">備註（選填）</label>
+      <input class="cart-input" id="orderRemarks" type="text" placeholder="特殊需求或備註">
+    </div>
+  </div>
+  <button class="checkout-btn" onclick="checkout()">✅ 確認送出訂單</button>
 </div>
 
 <!-- Loading -->
@@ -372,7 +233,6 @@ body {
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZ_INF8CS_rsn6x98_QPlcJCOLT-K0FU5s9lDpgX2Dj_zcGqJZM-7IiwpG2T60D4tRPA/exec';
 const NOTIFY_URL = 'https://ticket-api-kohl.vercel.app/api/notify';
 
-// 業務清單（你可以新增）
 const AGENTS = {
   'A238': '業務 A238',
   'S999': '業務 S999',
@@ -382,9 +242,19 @@ const AGENTS = {
   'ADMIN': '管理員（Meiching）',
 };
 
+const DEFAULT_PLANS = [
+  { id: 'S-EC',    name: '短線經濟艙 × 1人',       price: 5500,  desc: '32個短線航點任選，出發前再選', type: 'short' },
+  { id: 'S-BU',    name: '短線商務艙 × 1人',       price: 12500, desc: '32個短線航點任選，出發前再選', type: 'short' },
+  { id: 'S-EC4',   name: '短線經濟艙 × 4人組',     price: 20000, desc: '32個短線航點任選，出發前再選', type: 'short' },
+  { id: 'S-BU4',   name: '短線商務艙 × 4人組',     price: 48000, desc: '32個短線航點任選，出發前再選', type: 'short' },
+  { id: 'L-EU-EC', name: '歐洲線經濟艙 × 1人',     price: 11000, desc: '20個歐洲航點任選，出發前再選', type: 'long' },
+  { id: 'L-EU-BU', name: '歐洲線商務艙 × 1人',     price: 28500, desc: '20個歐洲航點任選，出發前再選', type: 'long' },
+  { id: 'L-OT-EC', name: '非歐洲長線經濟艙 × 1人', price: 9900,  desc: '9個非歐洲航點任選，出發前再選', type: 'long' },
+  { id: 'L-OT-BU', name: '非歐洲長線商務艙 × 1人', price: 25000, desc: '9個非歐洲航點任選，出發前再選', type: 'long' },
+];
+
 let currentAgent = null;
-let selectedPlan = null;
-let plans = [];
+let cart = []; // [{ plan, qty, note }]
 
 // ── 登入 ──
 function login() {
@@ -401,20 +271,23 @@ function login() {
 function logout() {
   localStorage.removeItem('flt_agent');
   currentAgent = null;
+  cart = [];
   document.getElementById('loginPage').style.display = 'flex';
   document.getElementById('mainPage').style.display = 'none';
+  document.getElementById('cartFab').style.display = 'none';
   document.getElementById('agentInput').value = '';
 }
 
 function showMain() {
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('mainPage').style.display = 'block';
+  document.getElementById('cartFab').style.display = 'flex';
   document.getElementById('agentLabel').textContent = `${currentAgent.id} · ${currentAgent.name}`;
-  loadPlans();
+  loadAndRenderPlans();
 }
 
 // ── 方案 ──
-async function loadPlans() {
+async function loadAndRenderPlans() {
   try {
     const res = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
@@ -422,113 +295,187 @@ async function loadPlans() {
       body: JSON.stringify({ type: 'getPlans' })
     });
     const data = await res.json();
-    plans = data.plans || getDefaultPlans();
+    if (data.plans && data.plans.length) {
+      // 從 Sheet 讀取成功
+      const plans = data.plans.map(p => ({
+        id: p['方案編號'],
+        name: p['方案名稱'],
+        price: Number(p['單價']),
+        desc: p['說明'] || '',
+        type: p['方案編號'].startsWith('L') ? 'long' : 'short'
+      }));
+      renderPlans(plans);
+    } else {
+      renderPlans(DEFAULT_PLANS);
+    }
   } catch(e) {
-    plans = getDefaultPlans();
+    renderPlans(DEFAULT_PLANS);
   }
-  renderPlans();
 }
 
-function getDefaultPlans() {
-  return [
-    { 方案編號: 'S-EC',    方案名稱: '短線經濟艙 × 1人',      單價: 5500,  說明: '32個短線航點任選，出發前再選' },
-    { 方案編號: 'S-BU',    方案名稱: '短線商務艙 × 1人',      單價: 12500, 說明: '32個短線航點任選，出發前再選' },
-    { 方案編號: 'S-EC4',   方案名稱: '短線經濟艙 × 4人組',    單價: 20000, 說明: '32個短線航點任選，出發前再選' },
-    { 方案編號: 'S-BU4',   方案名稱: '短線商務艙 × 4人組',    單價: 48000, 說明: '32個短線航點任選，出發前再選' },
-    { 方案編號: 'L-EU-EC', 方案名稱: '歐洲線經濟艙 × 1人',    單價: 11000, 說明: '20個歐洲航點任選，出發前再選' },
-    { 方案編號: 'L-EU-BU', 方案名稱: '歐洲線商務艙 × 1人',    單價: 28500, 說明: '20個歐洲航點任選，出發前再選' },
-    { 方案編號: 'L-OT-EC', 方案名稱: '非歐洲長線經濟艙 × 1人', 單價: 9900, 說明: '9個非歐洲航點任選，出發前再選' },
-    { 方案編號: 'L-OT-BU', 方案名稱: '非歐洲長線商務艙 × 1人', 單價: 25000, 說明: '9個非歐洲航點任選，出發前再選' },
-  ];
+function renderPlans(plans) {
+  const short = plans.filter(p => p.type === 'short');
+  const long = plans.filter(p => p.type === 'long');
+  document.getElementById('planGridShort').innerHTML = short.length ? short.map(planCard).join('') : '<div class="empty-state">目前無短線方案</div>';
+  document.getElementById('planGridLong').innerHTML = long.length ? long.map(planCard).join('') : '<div class="empty-state">目前無長線方案</div>';
+  // 更新全域方案供購物車使用
+  window._currentPlans = plans;
 }
 
-function renderPlans() {
-  const grid = document.getElementById('planGrid');
-  if (!plans.length) { grid.innerHTML = '<div class="empty-state">目前沒有可用方案</div>'; return; }
-  grid.innerHTML = plans.map(p => `
-    <div class="plan-card" id="plan-${p['方案編號']}" onclick="selectPlan('${p['方案編號']}')">
-      <div class="plan-left">
-        <div class="plan-id">${p['方案編號']}</div>
-        <div class="plan-name">${p['方案名稱']}</div>
-        <div class="plan-desc">${p['說明'] || ''}</div>
-      </div>
-      <div class="plan-price">$${Number(p['單價']).toLocaleString()}</div>
+function planCard(p) {
+  return `
+  <div class="plan-card">
+    <div class="plan-left">
+      <div class="plan-id">${p.id}</div>
+      <div class="plan-name">${p.name}</div>
+      <div class="plan-desc">${p.desc}</div>
     </div>
-  `).join('');
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+      <div class="plan-price">$${p.price.toLocaleString()}</div>
+      <button class="add-cart-btn" onclick="addToCart('${p.id}')">加入購物車</button>
+    </div>
+  </div>`;
 }
 
-function selectPlan(id) {
-  document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById(`plan-${id}`)?.classList.add('selected');
-  selectedPlan = plans.find(p => p['方案編號'] === id);
-  updateSummary();
+// ── 購物車 ──
+function addToCart(planId) {
+  const plans = window._currentPlans || DEFAULT_PLANS;
+  const plan = plans.find(p => p.id === planId);
+  if (!plan) return;
+  const existing = cart.find(c => c.plan.id === planId);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ plan, qty: 1, note: '' });
+  }
+  updateCartBadge();
+  const btn = event.target;
+  btn.textContent = '✅ 已加入';
+  setTimeout(() => { btn.textContent = '加入購物車'; }, 1000);
 }
 
-function updateSummary() {
-  if (!selectedPlan) return;
-  const qty = parseInt(document.getElementById('quantitySelect').value);
-  const total = selectedPlan['單價'] * qty;
-  document.getElementById('summaryPlan').textContent = selectedPlan['方案名稱'];
-  document.getElementById('summaryPrice').textContent = `$${Number(selectedPlan['單價']).toLocaleString()}`;
-  document.getElementById('summaryQty').textContent = `${qty} 組`;
-  document.getElementById('summaryTotal').textContent = `$${total.toLocaleString()}`;
-  document.getElementById('orderSummary').style.display = 'block';
+function updateCartBadge() {
+  const total = cart.reduce((s, c) => s + c.qty, 0);
+  const badge = document.getElementById('cartFabBadge');
+  if (total > 0) {
+    badge.style.display = 'flex';
+    badge.textContent = total;
+  } else {
+    badge.style.display = 'none';
+  }
 }
 
-// ── 下單 ──
-async function submitOrder() {
-  if (!selectedPlan) { alert('請選擇方案！'); return; }
-  const qty = parseInt(document.getElementById('quantitySelect').value);
-  const total = selectedPlan['單價'] * qty;
+function openCart() {
+  renderCart();
+  document.getElementById('cartOverlay').classList.add('show');
+  document.getElementById('cartPanel').classList.add('show');
+}
 
+function closeCart() {
+  document.getElementById('cartOverlay').classList.remove('show');
+  document.getElementById('cartPanel').classList.remove('show');
+}
+
+function renderCart() {
+  const el = document.getElementById('cartItems');
+  if (!cart.length) {
+    el.innerHTML = '<div class="cart-empty">購物車是空的 🛒<br>請先選擇方案加入</div>';
+    return;
+  }
+  const total = cart.reduce((s, c) => s + c.plan.price * c.qty, 0);
+  el.innerHTML = cart.map((c, i) => `
+    <div class="cart-item">
+      <div class="cart-item-header">
+        <div>
+          <div class="cart-item-id">${c.plan.id}</div>
+          <div class="cart-item-name">${c.plan.name}</div>
+        </div>
+        <button class="cart-remove" onclick="removeFromCart(${i})">🗑</button>
+      </div>
+      <div class="cart-item-controls">
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
+          <div class="qty-num">${c.qty}</div>
+          <button class="qty-btn" onclick="changeQty(${i}, 1)">＋</button>
+        </div>
+        <div class="cart-item-price">$${(c.plan.price * c.qty).toLocaleString()}</div>
+      </div>
+      <textarea class="cart-note-field" placeholder="此項目備註（選填）" onchange="updateNote(${i}, this.value)">${c.note}</textarea>
+    </div>
+  `).join('') + `
+  <div class="cart-total-row">
+    <div class="cart-total-label">合計</div>
+    <div class="cart-total-amount">$${total.toLocaleString()}</div>
+  </div>`;
+}
+
+function removeFromCart(i) {
+  cart.splice(i, 1);
+  updateCartBadge();
+  renderCart();
+}
+
+function changeQty(i, delta) {
+  cart[i].qty = Math.max(1, cart[i].qty + delta);
+  updateCartBadge();
+  renderCart();
+}
+
+function updateNote(i, val) {
+  cart[i].note = val;
+}
+
+// ── 結帳 ──
+async function checkout() {
+  if (!cart.length) { alert('購物車是空的！'); return; }
+  closeCart();
   showLoading('送出訂單中...');
 
-  const order = {
-    type: 'order',
-    timestamp: new Date().toISOString(),
-    agentId: currentAgent.id,
-    agentName: currentAgent.name,
-    planId: selectedPlan['方案編號'],
-    planName: selectedPlan['方案名稱'],
-    quantity: qty,
-    total,
-    clientName: document.getElementById('clientName').value.trim(),
-    remarks: document.getElementById('orderRemarks').value.trim(),
-  };
+  const clientName = document.getElementById('clientName').value.trim();
+  const remarks = document.getElementById('orderRemarks').value.trim();
+  const total = cart.reduce((s, c) => s + c.plan.price * c.qty, 0);
+  const timestamp = new Date().toISOString();
 
-  try {
-    // 存 Google Sheet
+  // 每個購物車項目分開寫入 Sheet
+  for (const item of cart) {
+    const order = {
+      type: 'order',
+      timestamp,
+      agentId: currentAgent.id,
+      agentName: currentAgent.name,
+      planId: item.plan.id,
+      planName: item.plan.name,
+      quantity: item.qty,
+      total: item.plan.price * item.qty,
+      clientName,
+      remarks: item.note || remarks,
+    };
     await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(order)
     });
-
-    // LINE 通知
-    const msg = `📦 新訂單通知\n━━━━━━━━━━━━━\n🧑‍💼 業務：${currentAgent.id} ${currentAgent.name}\n📋 方案：${order.planId} ${order.planName}\n🔢 組數：${qty} 組\n💰 總金額：$${total.toLocaleString()}\n${order.clientName ? `👤 客戶：${order.clientName}\n` : ''}${order.remarks ? `📝 備註：${order.remarks}` : ''}`;
-
-    await fetch(NOTIFY_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'order', message: msg })
-    });
-
-    hideLoading();
-    alert(`✅ 訂單送出成功！\n\n方案：${order.planName}\n組數：${qty} 組\n總金額：$${total.toLocaleString()}`);
-
-    // 重置
-    selectedPlan = null;
-    document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
-    document.getElementById('clientName').value = '';
-    document.getElementById('orderRemarks').value = '';
-    document.getElementById('quantitySelect').value = '1';
-    document.getElementById('orderSummary').style.display = 'none';
-
-  } catch(e) {
-    hideLoading();
-    alert('送出失敗，請稍後再試！');
   }
+
+  // LINE 通知（整筆）
+  const itemLines = cart.map(c => `  • ${c.plan.id} ${c.plan.name} × ${c.qty} 組 = $${(c.plan.price * c.qty).toLocaleString()}${c.note ? ` (${c.note})` : ''}`).join('\n');
+  const msg = `📦 新訂單通知\n━━━━━━━━━━━━━\n🧑‍💼 業務：${currentAgent.id} ${currentAgent.name}\n\n${itemLines}\n\n💰 訂單總金額：$${total.toLocaleString()}${clientName ? `\n👤 客戶：${clientName}` : ''}${remarks ? `\n📝 備註：${remarks}` : ''}`;
+
+  await fetch(NOTIFY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'order', message: msg })
+  });
+
+  hideLoading();
+  alert(`✅ 訂單送出成功！\n\n總金額：$${total.toLocaleString()}`);
+
+  // 清空購物車
+  cart = [];
+  document.getElementById('clientName').value = '';
+  document.getElementById('orderRemarks').value = '';
+  updateCartBadge();
 }
 
 // ── 訂單紀錄 ──
@@ -541,19 +488,21 @@ async function loadOrders() {
       body: JSON.stringify({ type: 'getOrders', agentId: currentAgent.id })
     });
     const data = await res.json();
-    const orders = data.orders || [];
+    const orders = (data.orders || []).reverse();
     if (!orders.length) {
       document.getElementById('orderList').innerHTML = '<div class="empty-state">還沒有訂單紀錄 📦</div>';
       return;
     }
-    document.getElementById('orderList').innerHTML = orders.reverse().map(o => `
+    document.getElementById('orderList').innerHTML = orders.map(o => `
       <div class="order-item">
         <div class="order-header">
-          <div class="order-plan">${o['方案名稱'] || o['planName']}</div>
+          <div>
+            <div class="order-no">${o['時間'] || ''}</div>
+            <div class="order-plans">${o['方案名稱'] || ''}</div>
+          </div>
           <div class="order-status status-${o['狀態'] === '已確認' ? 'confirmed' : 'pending'}">${o['狀態'] || '待確認'}</div>
         </div>
         <div class="order-detail">
-          🕐 ${o['時間'] || ''}<br>
           🔢 ${o['組數'] || ''}組${o['客戶姓名'] ? ` · 👤 ${o['客戶姓名']}` : ''}${o['備註'] ? ` · 📝 ${o['備註']}` : ''}
         </div>
         <div class="order-total">$${Number(o['總金額'] || 0).toLocaleString()}</div>
@@ -564,33 +513,22 @@ async function loadOrders() {
   }
 }
 
-// ── Tab 切換 ──
+// ── Tab ──
 function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tabOrder').style.display = tab === 'order' ? 'block' : 'none';
   document.getElementById('tabRecords').style.display = tab === 'records' ? 'block' : 'none';
-  event.target.classList.add('active');
+  document.getElementById('tab-order').classList.toggle('active', tab === 'order');
+  document.getElementById('tab-records').classList.toggle('active', tab === 'records');
   if (tab === 'records') loadOrders();
 }
 
-function showLoading(text) {
-  document.getElementById('loadingText').textContent = text;
-  document.getElementById('loadingOverlay').classList.add('show');
-}
-function hideLoading() {
-  document.getElementById('loadingOverlay').classList.remove('show');
-}
+function showLoading(text) { document.getElementById('loadingText').textContent = text; document.getElementById('loadingOverlay').classList.add('show'); }
+function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
 
 // ── 初始化 ──
 const saved = localStorage.getItem('flt_agent');
-if (saved) {
-  currentAgent = JSON.parse(saved);
-  showMain();
-}
-
-document.getElementById('agentInput').addEventListener('keypress', e => {
-  if (e.key === 'Enter') login();
-});
+if (saved) { currentAgent = JSON.parse(saved); showMain(); }
+document.getElementById('agentInput').addEventListener('keypress', e => { if (e.key === 'Enter') login(); });
 </script>
 </body>
 </html>
