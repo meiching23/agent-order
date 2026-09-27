@@ -491,11 +491,7 @@ async function checkout() {
 async function loadOrders() {
   document.getElementById('orderList').innerHTML = '<div class="empty-state">載入中...</div>';
   try {
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'getOrders', agentId: currentAgent.id })
-    });
+    const res = await fetch(APPS_SCRIPT_URL + `?type=getOrders&agentId=${currentAgent.id}`);
     const data = await res.json();
     const orders = (data.orders || []).reverse();
     if (!orders.length) {
