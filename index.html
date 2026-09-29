@@ -274,6 +274,11 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
         <label class="cart-field-label">說明</label>
         <input class="cart-input" id="newPlanDesc" type="text" placeholder="例：限時促銷，效期2026/12/31">
       </div>
+      <div class="cart-field">
+        <label class="cart-field-label">加購項目（選填）</label>
+        <input class="cart-input" id="newPlanAddons" type="text" placeholder="例：小孩票:2500;升等商務:8000">
+        <div style="font-size:11px;color:var(--subtext);margin-top:4px;">格式：名稱:價格，多個用分號分隔</div>
+      </div>
       <button class="checkout-btn" style="margin-top:8px;" onclick="addNewPlan()">➕ 新增方案</button>
     </div>
 
@@ -785,6 +790,7 @@ async function addNewPlan() {
   const name = document.getElementById('newPlanName').value.trim();
   const price = document.getElementById('newPlanPrice').value.trim();
   const desc = document.getElementById('newPlanDesc').value.trim();
+  const addons = document.getElementById('newPlanAddons').value.trim();
   if (!id || !name || !price) { alert('請填寫方案編號、名稱和單價！'); return; }
   showLoading('新增方案中...');
   try {
@@ -792,13 +798,14 @@ async function addNewPlan() {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'addPlan', id, name, price: Number(price), desc })
+      body: JSON.stringify({ type: 'addPlan', id, name, price: Number(price), desc, addons })
     });
     hideLoading();
     document.getElementById('newPlanId').value = '';
     document.getElementById('newPlanName').value = '';
     document.getElementById('newPlanPrice').value = '';
     document.getElementById('newPlanDesc').value = '';
+    document.getElementById('newPlanAddons').value = '';
     alert('✅ 方案新增成功！');
     loadAdminPlans();
     loadAndRenderPlans();
