@@ -151,7 +151,14 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .plan-manage-price { color: var(--brown); font-weight: 800; margin: 0 12px; }
 .delist-btn { background: #fce8e6; color: var(--error); border: 1px solid #f0b0a0; border-radius: 8px; padding: 5px 12px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
 
-/* ── 訂單分組 ── */
+/* ── 加購項目 ── */
+.plan-addons { background: #f0f8e8; border: 1.5px solid #90c870; border-radius: 10px; padding: 12px 14px; margin-top: -4px; border-top: none; border-radius: 0 0 10px 10px; }
+.plan-addon-title { font-size: 10px; font-weight: 800; color: #4a8a38; letter-spacing: 1px; margin-bottom: 8px; }
+.plan-addon-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #c0e0b0; }
+.plan-addon-item:last-child { border-bottom: none; padding-bottom: 0; }
+.plan-addon-name { font-size: 12px; color: #3a6020; font-weight: 600; }
+.plan-addon-price { font-size: 13px; font-weight: 800; color: #4a8a38; }
+.add-addon-btn { background: #4a8a38; color: #fff; border: none; border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; white-space: nowrap; }
 .order-group { margin-bottom: 10px; border: 1.5px solid var(--light-brown); border-radius: 12px; overflow: hidden; }
 .order-group-header { background: #fff8ee; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 13px; color: var(--text); }
 .order-group-header:hover { background: #fef5e6; }
@@ -324,14 +331,14 @@ const AGENTS = {
 };
 
 const DEFAULT_PLANS = [
-  { id: 'S-EC',    name: '短線經濟艙 × 1人',       price: 5500,  desc: '32個短線航點任選，出發前再選', type: 'short' },
-  { id: 'S-BU',    name: '短線商務艙 × 1人',       price: 12500, desc: '32個短線航點任選，出發前再選', type: 'short' },
-  { id: 'S-EC4',   name: '短線經濟艙 × 4人組',     price: 20000, desc: '32個短線航點任選，出發前再選', type: 'short' },
-  { id: 'S-BU4',   name: '短線商務艙 × 4人組',     price: 48000, desc: '32個短線航點任選，出發前再選', type: 'short' },
-  { id: 'L-EU-EC', name: '歐洲線經濟艙 × 1人',     price: 11000, desc: '20個歐洲航點任選，出發前再選', type: 'long' },
-  { id: 'L-EU-BU', name: '歐洲線商務艙 × 1人',     price: 28500, desc: '20個歐洲航點任選，出發前再選', type: 'long' },
-  { id: 'L-OT-EC', name: '非歐洲長線經濟艙 × 1人', price: 9900,  desc: '9個非歐洲航點任選，出發前再選', type: 'long' },
-  { id: 'L-OT-BU', name: '非歐洲長線商務艙 × 1人', price: 25000, desc: '9個非歐洲航點任選，出發前再選', type: 'long' },
+  { id: 'S-EC',    name: '短線經濟艙 × 1人',       price: 5500,  desc: '32個短線航點任選，出發前再選', type: 'short', addons: '' },
+  { id: 'S-BU',    name: '短線商務艙 × 1人',       price: 12500, desc: '32個短線航點任選，出發前再選', type: 'short', addons: '' },
+  { id: 'S-EC4',   name: '短線經濟艙 × 4人組',     price: 20000, desc: '32個短線航點任選，出發前再選', type: 'short', addons: '' },
+  { id: 'S-BU4',   name: '短線商務艙 × 4人組',     price: 48000, desc: '32個短線航點任選，出發前再選', type: 'short', addons: '' },
+  { id: 'L-EU-EC', name: '歐洲線經濟艙 × 1人',     price: 11000, desc: '20個歐洲航點任選，出發前再選', type: 'long',  addons: '' },
+  { id: 'L-EU-BU', name: '歐洲線商務艙 × 1人',     price: 28500, desc: '20個歐洲航點任選，出發前再選', type: 'long',  addons: '' },
+  { id: 'L-OT-EC', name: '非歐洲長線經濟艙 × 1人', price: 9900,  desc: '9個非歐洲航點任選，出發前再選', type: 'long', addons: '' },
+  { id: 'L-OT-BU', name: '非歐洲長線商務艙 × 1人', price: 25000, desc: '9個非歐洲航點任選，出發前再選', type: 'long', addons: '' },
 ];
 
 let currentAgent = null;
@@ -382,6 +389,7 @@ async function loadAndRenderPlans() {
         name: p['方案名稱'],
         price: Number(p['單價']),
         desc: p['說明'] || '',
+        addons: p['加購項目'] || '',
         type: p['方案編號'].startsWith('S') ? 'short' : p['方案編號'].startsWith('L') ? 'long' : 'promo'
       }));
       renderPlans(plans);
@@ -411,6 +419,25 @@ function renderPlans(plans) {
 }
 
 function planCard(p) {
+  const addons = p.addons ? p.addons.split(';').filter(a => a.includes(':')).map(a => {
+    const [name, price] = a.split(':');
+    return { name: name.trim(), price: Number(price.trim()) };
+  }) : [];
+
+  const addonHtml = addons.length ? `
+    <div class="plan-addons">
+      <div class="plan-addon-title">➕ 可加購</div>
+      ${addons.map(a => `
+        <div class="plan-addon-item">
+          <div class="plan-addon-name">${a.name}</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="plan-addon-price">$${a.price.toLocaleString()}</div>
+            <button class="add-addon-btn" onclick="addAddonToCart('${p.id}','${a.name}',${a.price})">加購</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>` : '';
+
   return `
   <div class="plan-card">
     <div class="plan-left">
@@ -422,11 +449,29 @@ function planCard(p) {
       <div class="plan-price">$${p.price.toLocaleString()}</div>
       <button class="add-cart-btn" onclick="addToCart('${p.id}')">加入購物車</button>
     </div>
-  </div>`;
+  </div>
+  ${addonHtml}`;
 }
 
 // ── 購物車 ──
-function addToCart(planId) {
+function addAddonToCart(planId, addonName, addonPrice) {
+  const addonId = `${planId}-${addonName}`;
+  const existing = cart.find(c => c.plan.id === addonId);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({
+      plan: { id: addonId, name: `${addonName}（${planId}加購）`, price: addonPrice },
+      qty: 1,
+      note: ''
+    });
+  }
+  updateCartBadge();
+  const btn = event.target;
+  btn.textContent = '✅';
+  setTimeout(() => { btn.textContent = '加購'; }, 1000);
+}
+window.addAddonToCart = addAddonToCart;
   const plans = window._currentPlans || DEFAULT_PLANS;
   const plan = plans.find(p => p.id === planId);
   if (!plan) return;
