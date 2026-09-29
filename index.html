@@ -474,6 +474,8 @@ function addAddonToCart(planId, addonName, addonPrice) {
   setTimeout(() => { btn.textContent = '加購'; }, 1000);
 }
 window.addAddonToCart = addAddonToCart;
+
+function addToCart(planId) {
   const plans = window._currentPlans || DEFAULT_PLANS;
   const plan = plans.find(p => p.id === planId);
   if (!plan) return;
