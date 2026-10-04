@@ -161,6 +161,22 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .plan-addon-name { font-size: 12px; color: #3a6020; font-weight: 600; }
 .plan-addon-price { font-size: 13px; font-weight: 800; color: #4a8a38; }
 .add-addon-btn { background: #4a8a38; color: #fff; border: none; border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; white-space: nowrap; }
+/* ── 庫存管理 ── */
+.stock-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed var(--border); gap: 10px; }
+.stock-item:last-child { border-bottom: none; }
+.stock-left { flex: 1; }
+.stock-id { font-size: 10px; color: var(--subtext); margin-bottom: 2px; }
+.stock-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.stock-numbers { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.stock-num { text-align: center; min-width: 36px; }
+.stock-num-label { font-size: 9px; color: var(--subtext); margin-bottom: 2px; }
+.stock-num-value { font-size: 14px; font-weight: 900; }
+.stock-sold { color: var(--subtext); }
+.stock-remain { color: var(--success); }
+.stock-remain.low { color: var(--error); }
+.stock-add-btn { background: var(--brown); color: #fff; border: none; border-radius: 8px; padding: 6px 10px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; white-space: nowrap; }
+.stock-input { width: 52px; height: 34px; border: 1.5px solid var(--border); border-radius: 8px; text-align: center; font-size: 14px; font-weight: 700; color: var(--text); background: #fff8ee; outline: none; }
+
 .order-group { margin-bottom: 10px; border: 1.5px solid var(--light-brown); border-radius: 12px; overflow: hidden; }
 .order-group-header { background: #fff8ee; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 13px; color: var(--text); }
 .order-group-header:hover { background: #fef5e6; }
@@ -280,6 +296,12 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
         <div style="font-size:11px;color:var(--subtext);margin-top:4px;">格式：名稱:價格，多個用分號分隔</div>
       </div>
       <button class="checkout-btn" style="margin-top:8px;" onclick="addNewPlan()">➕ 新增方案</button>
+    </div>
+
+    <!-- 庫存管理 -->
+    <div class="card">
+      <div class="card-title">📊 庫存管理</div>
+      <div id="stockList"><div class="empty-state">載入中...</div></div>
     </div>
 
     <!-- 方案管理 -->
@@ -598,6 +620,13 @@ async function checkout() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(order)
     });
+    // 扣庫存
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'deductStock', planId: item.plan.id, quantity: item.qty })
+    });
   }
 
   // LINE 通知（整筆）
@@ -660,7 +689,7 @@ function switchTab(tab) {
   document.getElementById('tab-records').classList.toggle('active', tab === 'records');
   document.getElementById('tab-admin').classList.toggle('active', tab === 'admin');
   if (tab === 'records') loadOrders();
-  if (tab === 'admin') { loadAllOrders(); loadAdminPlans(); }
+  if (tab === 'admin') { loadAllOrders(); loadAdminPlans(); loadStock(); }
 }
 
 // ── 管理員：所有訂單 ──
@@ -758,6 +787,71 @@ async function confirmOrder(row) {
   } catch(e) {
     hideLoading();
     alert('確認失敗，請稍後再試');
+  }
+}
+
+// ── 庫存管理 ──
+async function loadStock() {
+  document.getElementById('stockList').innerHTML = '<div class="empty-state">載入中...</div>';
+  try {
+    const res = await fetch(APPS_SCRIPT_URL + '?type=getStock');
+    const data = await res.json();
+    const stock = data.stock || [];
+    if (!stock.length) {
+      document.getElementById('stockList').innerHTML = '<div class="empty-state">尚無庫存紀錄<br>請先補充庫存</div>';
+      return;
+    }
+    document.getElementById('stockList').innerHTML = stock.map(s => {
+      const remain = Number(s['剩餘庫存'] || 0);
+      const sold = Number(s['已售出'] || 0);
+      const total = Number(s['總庫存'] || 0);
+      const isLow = remain <= 3;
+      return `
+      <div class="stock-item">
+        <div class="stock-left">
+          <div class="stock-id">${s['方案編號']}</div>
+          <div class="stock-name">${s['方案名稱']}</div>
+        </div>
+        <div class="stock-numbers">
+          <div class="stock-num">
+            <div class="stock-num-label">總庫存</div>
+            <div class="stock-num-value">${total}</div>
+          </div>
+          <div class="stock-num">
+            <div class="stock-num-label">已售出</div>
+            <div class="stock-num-value stock-sold">${sold}</div>
+          </div>
+          <div class="stock-num">
+            <div class="stock-num-label">剩餘</div>
+            <div class="stock-num-value stock-remain ${isLow ? 'low' : ''}">${remain}</div>
+          </div>
+          <input class="stock-input" id="stock-qty-${s['方案編號']}" type="number" min="1" value="10" placeholder="數量">
+          <button class="stock-add-btn" onclick="addStock('${s['方案編號']}', '${s['方案名稱']}')">補貨</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    document.getElementById('stockList').innerHTML = '<div class="empty-state">載入失敗</div>';
+  }
+}
+
+async function addStock(planId, planName) {
+  const qty = parseInt(document.getElementById(`stock-qty-${planId}`).value);
+  if (!qty || qty <= 0) { alert('請填寫補貨數量！'); return; }
+  showLoading('補貨中...');
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'addStock', planId, planName, quantity: qty })
+    });
+    hideLoading();
+    alert(`✅ ${planName} 補貨 ${qty} 張成功！`);
+    loadStock();
+  } catch(e) {
+    hideLoading();
+    alert('補貨失敗，請稍後再試');
   }
 }
 
