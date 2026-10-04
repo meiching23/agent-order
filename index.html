@@ -802,9 +802,7 @@ async function loadStock() {
       return;
     }
     document.getElementById('stockList').innerHTML = stock.map(s => {
-      const remain = Number(s['剩餘庫存'] || 0);
-      const sold = Number(s['已售出'] || 0);
-      const total = Number(s['總庫存'] || 0);
+      const remain = Number(s['庫存'] || 0);
       const isLow = remain <= 3;
       return `
       <div class="stock-item">
@@ -814,18 +812,10 @@ async function loadStock() {
         </div>
         <div class="stock-numbers">
           <div class="stock-num">
-            <div class="stock-num-label">總庫存</div>
-            <div class="stock-num-value">${total}</div>
+            <div class="stock-num-label">剩餘庫存</div>
+            <div class="stock-num-value stock-remain ${isLow ? 'low' : ''}">${remain} 張</div>
           </div>
-          <div class="stock-num">
-            <div class="stock-num-label">已售出</div>
-            <div class="stock-num-value stock-sold">${sold}</div>
-          </div>
-          <div class="stock-num">
-            <div class="stock-num-label">剩餘</div>
-            <div class="stock-num-value stock-remain ${isLow ? 'low' : ''}">${remain}</div>
-          </div>
-          <input class="stock-input" id="stock-qty-${s['方案編號']}" type="number" min="1" value="10" placeholder="數量">
+          <input class="stock-input" id="stock-qty-${s['方案編號']}" type="number" min="1" value="10">
           <button class="stock-add-btn" onclick="addStock('${s['方案編號']}', '${s['方案名稱']}')">補貨</button>
         </div>
       </div>`;
