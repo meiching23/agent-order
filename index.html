@@ -298,13 +298,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
       <button class="checkout-btn" style="margin-top:8px;" onclick="addNewPlan()">➕ 新增方案</button>
     </div>
 
-    <!-- 庫存管理 -->
-    <div class="card">
-      <div class="card-title">📊 庫存管理</div>
-      <div id="stockList"><div class="empty-state">載入中...</div></div>
-    </div>
-
-    <!-- 方案管理 -->
+    <!-- 方案管理（含庫存）-->
     <div class="card">
       <div class="card-title">📦 方案管理</div>
       <div id="adminPlanList"><div class="empty-state">載入中...</div></div>
@@ -689,7 +683,7 @@ function switchTab(tab) {
   document.getElementById('tab-records').classList.toggle('active', tab === 'records');
   document.getElementById('tab-admin').classList.toggle('active', tab === 'admin');
   if (tab === 'records') loadOrders();
-  if (tab === 'admin') { loadAllOrders(); loadAdminPlans(); loadStock(); }
+  if (tab === 'admin') { loadAllOrders(); loadAdminPlans(); }
 }
 
 // ── 管理員：所有訂單 ──
@@ -853,16 +847,28 @@ async function loadAdminPlans() {
     const data = await res.json();
     const plans = data.plans || [];
     if (!plans.length) { document.getElementById('adminPlanList').innerHTML = '<div class="empty-state">沒有方案</div>'; return; }
-    document.getElementById('adminPlanList').innerHTML = plans.map(p => `
+    document.getElementById('adminPlanList').innerHTML = plans.map(p => {
+      const stock = Number(p['庫存'] || 0);
+      const isLow = stock <= 3;
+      return `
       <div class="plan-manage-item">
         <div class="plan-manage-left">
           <div class="plan-manage-id">${p['方案編號']}</div>
           <div class="plan-manage-name">${p['方案名稱']}</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+            <span style="font-size:11px;color:${isLow ? 'var(--error)' : 'var(--success)'};font-weight:700;">
+              庫存：${stock} 張${isLow ? ' ⚠️' : ''}
+            </span>
+            <input class="stock-input" id="stock-qty-${p['方案編號']}" type="number" min="1" value="10">
+            <button class="stock-add-btn" onclick="addStock('${p['方案編號']}', '${p['方案名稱']}')">補貨</button>
+          </div>
         </div>
-        <div class="plan-manage-price">$${Number(p['單價']).toLocaleString()}</div>
-        <button class="delist-btn" onclick="togglePlan('${p['方案編號']}', '${p['狀態']}')">${p['狀態'] === '上架' ? '下架' : '上架'}</button>
-      </div>
-    `).join('');
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <div class="plan-manage-price">$${Number(p['單價']).toLocaleString()}</div>
+          <button class="delist-btn" onclick="togglePlan('${p['方案編號']}', '${p['狀態']}')">${p['狀態'] === '上架' ? '下架' : '上架'}</button>
+        </div>
+      </div>`;
+    }).join('');
   } catch(e) {
     document.getElementById('adminPlanList').innerHTML = '<div class="empty-state">載入失敗</div>';
   }
