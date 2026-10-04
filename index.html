@@ -472,7 +472,7 @@ function planCard(p) {
       <div class="plan-name">${p.name}</div>
       <div class="plan-desc">${p.desc}</div>
       <div style="font-size:11px;margin-top:4px;font-weight:700;color:${soldOut ? 'var(--error)' : stock <= 3 ? 'var(--error)' : 'var(--success)'};">
-        ${soldOut ? '❌ 已售完' : `庫存：${stock} 張${stock <= 3 ? ' ⚠️' : ''}`}
+        ${soldOut ? '❌ 已售完' : `庫存：${stock}${stock <= 3 ? ' ⚠️' : ''}`}
       </div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
@@ -877,7 +877,7 @@ async function loadAdminPlans() {
           <div class="plan-manage-name">${p['方案名稱']}</div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
             <span style="font-size:11px;color:${isLow ? 'var(--error)' : 'var(--success)'};font-weight:700;">
-              庫存：${stock} 張${isLow ? ' ⚠️' : ''}
+              庫存：${stock}${isLow ? ' ⚠️' : ''}
             </span>
             <input class="stock-input" id="stock-qty-${p['方案編號']}" type="number" min="1" value="10">
             <button class="stock-add-btn" onclick="addStock('${p['方案編號']}', '${p['方案名稱']}')">補貨</button>
