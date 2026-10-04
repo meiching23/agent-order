@@ -413,6 +413,7 @@ async function loadAndRenderPlans() {
         price: Number(p['單價']),
         desc: p['說明'] || '',
         addons: p['加購項目'] || '',
+        stock: Number(p['庫存'] || 0),
         type: p['方案編號'].startsWith('S') ? 'short' : p['方案編號'].startsWith('L') ? 'long' : 'promo'
       }));
       renderPlans(plans);
@@ -461,16 +462,26 @@ function planCard(p) {
       `).join('')}
     </div>` : '';
 
+  const stock = Number(p.stock || 0);
+  const soldOut = stock === 0;
+
   return `
-  <div class="plan-card">
+  <div class="plan-card" style="${soldOut ? 'opacity:0.6;' : ''}">
     <div class="plan-left">
       <div class="plan-id">${p.id}</div>
       <div class="plan-name">${p.name}</div>
       <div class="plan-desc">${p.desc}</div>
+      <div style="font-size:11px;margin-top:4px;font-weight:700;color:${soldOut ? 'var(--error)' : stock <= 3 ? 'var(--error)' : 'var(--success)'};">
+        ${soldOut ? '❌ 已售完' : `庫存：${stock} 張${stock <= 3 ? ' ⚠️' : ''}`}
+      </div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
       <div class="plan-price">$${p.price.toLocaleString()}</div>
-      <button class="add-cart-btn" onclick="addToCart('${p.id}')">加入購物車</button>
+      <button class="add-cart-btn" onclick="${soldOut ? '' : `addToCart('${p.id}')`}" 
+        style="${soldOut ? 'background:#ccc;cursor:not-allowed;' : ''}"
+        ${soldOut ? 'disabled' : ''}>
+        ${soldOut ? '已售完' : '加入購物車'}
+      </button>
     </div>
   </div>
   ${addonHtml}`;
@@ -586,6 +597,15 @@ function updateNote(i, val) {
 // ── 結帳 ──
 async function checkout() {
   if (!cart.length) { alert('購物車是空的！'); return; }
+  // 檢查庫存
+  const plans = window._currentPlans || DEFAULT_PLANS;
+  for (const item of cart) {
+    const plan = plans.find(p => p.id === item.plan.id);
+    if (plan && plan.stock !== undefined && plan.stock < item.qty) {
+      alert(`❌ ${item.plan.name} 庫存不足！\n剩餘 ${plan.stock} 張，您下單 ${item.qty} 組`);
+      return;
+    }
+  }
   closeCart();
   showLoading('送出訂單中...');
 
