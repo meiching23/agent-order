@@ -34,6 +34,7 @@ html { overflow-x: hidden; }
   --success: #5a8a40;
   --error: #c84030;
   --hotel: #3878c8;
+  --hotel-dark: #1a4a90;
   --hotel-light: #c8dff8;
   --hotel-bg: #eef5ff;
 }
@@ -61,12 +62,13 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .top-bar-brand { color: #fff8ee; font-size: 14px; font-weight: 900; }
 .top-bar-agent { color: rgba(255,248,238,0.7); font-size: 11px; margin-top: 2px; }
 .top-bar-right { display: flex; align-items: center; gap: 10px; }
+.cart-btn { position: relative; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff8ee; font-size: 20px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.cart-badge { position: absolute; top: -4px; right: -4px; background: #e84030; color: #fff; font-size: 10px; font-weight: 900; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; display: none; }
 .logout-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff8ee; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
 
 /* ── Tabs ── */
-.tabs { background: var(--cream); border-bottom: 1px solid var(--border); display: flex; padding: 0 12px; overflow-x: auto; }
-.tabs::-webkit-scrollbar { display: none; }
-.tab { padding: 14px 14px; font-size: 13px; font-weight: 700; color: var(--subtext); cursor: pointer; border-bottom: 2.5px solid transparent; white-space: nowrap; }
+.tabs { background: var(--cream); border-bottom: 1px solid var(--border); display: flex; padding: 0 20px; overflow-x: auto; }
+.tab { padding: 14px 16px; font-size: 13px; font-weight: 700; color: var(--subtext); cursor: pointer; border-bottom: 2.5px solid transparent; white-space: nowrap; }
 .tab.active { color: var(--brown); border-bottom-color: var(--brown); }
 
 .content { padding: 16px 20px; max-width: 640px; margin: 0 auto; }
@@ -90,10 +92,11 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .hotel-plan-card { background: var(--hotel-bg); border: 1.5px solid var(--hotel-light); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .hotel-plan-id { font-size: 10px; font-weight: 700; color: var(--hotel); letter-spacing: 1px; margin-bottom: 3px; }
 .hotel-plan-name { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
-.hotel-plan-desc { font-size: 11px; color: #5878a0; }
-.hotel-plan-price { font-size: 16px; font-weight: 900; color: var(--hotel); white-space: nowrap; }
+.hotel-plan-desc { font-size: 11px; color: #5070a0; }
+.hotel-plan-price { font-size: 14px; font-weight: 900; color: var(--hotel); white-space: nowrap; text-align: right; }
+.hotel-plan-price-sub { font-size: 10px; color: #7090c0; }
 .add-hotel-btn { background: var(--hotel); color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; white-space: nowrap; flex-shrink: 0; }
-.add-hotel-btn:active { background: #2858a8; }
+.add-hotel-btn:active { background: var(--hotel-dark); }
 
 /* ── 購物車 ── */
 .cart-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; }
@@ -104,7 +107,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .cart-title { font-size: 16px; font-weight: 900; color: var(--dark-brown); }
 .cart-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--subtext); }
 .cart-item { background: #fff8ee; border: 1.5px solid var(--light-brown); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
-.cart-item.hotel-item { background: var(--hotel-bg); border-color: var(--hotel-light); }
+.cart-item.hotel { background: var(--hotel-bg); border-color: var(--hotel-light); }
 .cart-item-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
 .cart-item-name { font-size: 13px; font-weight: 800; color: var(--text); }
 .cart-item-id { font-size: 10px; color: var(--subtext); margin-top: 2px; }
@@ -128,42 +131,29 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .cart-input:focus { border-color: var(--brown); }
 .checkout-btn { width: 100%; height: 50px; background: var(--brown); color: #fff8ee; border: none; border-radius: 14px; font-size: 15px; font-weight: 900; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; letter-spacing: 2px; margin-top: 8px; }
 .cart-empty { text-align: center; padding: 30px; color: var(--subtext); font-size: 14px; }
+.cart-hotel-notice { background: var(--hotel-bg); border: 1px solid var(--hotel-light); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; font-size: 11px; color: var(--hotel); line-height: 1.6; }
 
 /* ── 訂單紀錄 ── */
 .order-item { background: #fff8ee; border: 1.5px solid var(--light-brown); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
-.order-item.hotel-order { background: var(--hotel-bg); border-color: var(--hotel-light); }
+.order-item.hotel { background: var(--hotel-bg); border-color: var(--hotel-light); }
 .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
 .order-no { font-size: 11px; font-weight: 700; color: var(--subtext); margin-bottom: 4px; }
 .order-plans { font-size: 13px; font-weight: 800; color: var(--text); }
 .order-status { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 10px; flex-shrink: 0; }
 .status-pending { background: #fff8ee; color: var(--subtext); border: 1px solid var(--light-brown); }
 .status-confirmed { background: #e8f5e0; color: var(--success); border: 1px solid #b0d890; }
-.status-need-data { background: #fff0e0; color: #c86010; border: 1px solid #f0c080; }
-.status-data-filled { background: #e0f0ff; color: var(--hotel); border: 1px solid var(--hotel-light); }
+.status-hotel-waiting { background: var(--hotel-bg); color: var(--hotel); border: 1px solid var(--hotel-light); }
+.status-hotel-filled { background: #e0f0ff; color: #1a5090; border: 1px solid #90c0f0; }
 .order-detail { font-size: 12px; color: var(--subtext); line-height: 1.8; }
 .order-total { font-size: 16px; font-weight: 900; color: var(--brown); margin-top: 6px; }
-.fill-data-btn { background: #e06818; color: #fff; border: none; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; margin-top: 8px; width: 100%; }
-
-/* ── 補填資料 Modal ── */
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; align-items: flex-end; justify-content: center; }
-.modal-overlay.show { display: flex; }
-.modal-panel { background: var(--cream); border-radius: 20px 20px 0 0; padding: 24px 20px 40px; width: 100%; max-width: 640px; max-height: 85vh; overflow-y: auto; }
-.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border); }
-.modal-title { font-size: 16px; font-weight: 900; color: var(--dark-brown); }
-.modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--subtext); }
-.modal-field { margin-bottom: 12px; }
-.modal-label { font-size: 11px; font-weight: 700; color: var(--subtext); letter-spacing: 1px; margin-bottom: 5px; display: block; }
-.modal-input { width: 100%; height: 42px; border: 1.5px solid var(--border); border-radius: 10px; background: #fff8ee; padding: 0 14px; font-size: 14px; color: var(--text); font-family: 'Noto Sans TC', sans-serif; outline: none; }
-.modal-input:focus { border-color: var(--hotel); }
-.modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-.modal-submit-btn { width: 100%; height: 50px; background: var(--hotel); color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 900; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; letter-spacing: 2px; margin-top: 8px; }
-.modal-info-box { background: var(--hotel-bg); border: 1.5px solid var(--hotel-light); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; font-size: 12px; color: var(--hotel); line-height: 1.8; }
+.order-total.hotel { color: var(--hotel); }
+.fill-data-btn { background: var(--hotel); color: #fff; border: none; border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; margin-top: 8px; }
 
 /* ── 底部購物車按鈕 ── */
 .cart-fab { position: fixed; bottom: 20px; right: 20px; background: var(--brown); color: #fff; width: 56px; height: 56px; border-radius: 50%; border: none; font-size: 24px; cursor: pointer; box-shadow: 0 4px 20px rgba(120,80,30,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
 .cart-fab-badge { position: absolute; top: -4px; right: -4px; background: #e84030; color: #fff; font-size: 11px; font-weight: 900; width: 20px; height: 20px; border-radius: 50%; display: none; align-items: center; justify-content: center; }
 
-.loading-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+.loading-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
 .loading-overlay.show { display: flex; }
 .loading-spinner { width: 44px; height: 44px; border: 4px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -172,7 +162,6 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 
 /* ── 管理員 ── */
 .admin-order-item { background: #fff8ee; border: 1.5px solid var(--light-brown); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
-.admin-order-item.hotel { background: var(--hotel-bg); border-color: var(--hotel-light); }
 .admin-order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
 .admin-order-agent { font-size: 11px; font-weight: 800; color: var(--brown); margin-bottom: 2px; }
 .admin-order-plan { font-size: 13px; font-weight: 800; color: var(--text); }
@@ -186,6 +175,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .plan-manage-name { font-weight: 700; }
 .plan-manage-price { color: var(--brown); font-weight: 800; margin: 0 12px; }
 .delist-btn { background: #fce8e6; color: var(--error); border: 1px solid #f0b0a0; border-radius: 8px; padding: 5px 12px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
+.hotel-delist-btn { background: #e8f0ff; color: var(--hotel); border: 1px solid var(--hotel-light); border-radius: 8px; padding: 5px 12px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
 
 /* ── 加購項目 ── */
 .plan-addons { background: #f0f8e8; border: 1.5px solid #90c870; border-radius: 10px; padding: 12px 14px; margin-top: -4px; border-top: none; border-radius: 0 0 10px 10px; }
@@ -202,8 +192,19 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .order-group-body { padding: 10px; background: var(--cream); }
 .order-group-body .admin-order-item:last-child { margin-bottom: 0; }
 
-/* ── 飯店訂單資料 ── */
-.hotel-data-box { background: #e8f0ff; border: 1px solid var(--hotel-light); border-radius: 8px; padding: 8px 12px; margin-top: 8px; font-size: 11px; color: var(--hotel); line-height: 1.8; }
+/* ── 補填資料 Modal ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.show { display: flex; }
+.modal-box { background: var(--cream); border-radius: 20px; padding: 24px 20px; width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; }
+.modal-title { font-size: 16px; font-weight: 900; color: var(--hotel-dark); margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid var(--hotel-light); display: flex; align-items: center; gap: 8px; }
+.modal-field { margin-bottom: 12px; }
+.modal-label { font-size: 11px; font-weight: 700; color: var(--subtext); letter-spacing: 1px; margin-bottom: 5px; display: block; }
+.modal-input { width: 100%; height: 42px; border: 1.5px solid var(--border); border-radius: 10px; background: #fff8ee; padding: 0 14px; font-size: 14px; color: var(--text); font-family: 'Noto Sans TC', sans-serif; outline: none; }
+.modal-input:focus { border-color: var(--hotel); }
+.modal-row { display: flex; gap: 10px; }
+.modal-row .modal-field { flex: 1; }
+.modal-submit-btn { width: 100%; height: 48px; background: var(--hotel); color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 900; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; margin-top: 8px; }
+.modal-cancel-btn { width: 100%; height: 40px; background: none; color: var(--subtext); border: 1.5px solid var(--border); border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -263,15 +264,8 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 
   <!-- 飯店訂房 -->
   <div class="content" id="tabHotel" style="display:none;">
-    <div class="card" style="background:#e8f0ff;border-color:var(--hotel-light);">
-      <div style="font-size:12px;color:var(--hotel);line-height:1.9;">
-        🏨 <strong>飯店訂房說明</strong><br>
-        先下訂、付款，<strong>一週內再補填入住資料</strong>（日期、房型、住客資訊）<br>
-        補填方式：到「📋 我的訂單」找到飯店訂單點「補填資料」
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">🏨 飯店方案</div>
+    <div class="card" style="border-color:var(--hotel-light);">
+      <div class="card-title" style="color:var(--hotel-dark);">🏨 飯店方案</div>
       <div class="plan-grid" id="hotelPlanGrid"><div class="empty-state">載入中...</div></div>
     </div>
   </div>
@@ -330,32 +324,34 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
       <button class="checkout-btn" style="margin-top:8px;" onclick="addNewPlan()">➕ 新增方案</button>
     </div>
 
-    <!-- 新增飯店方案 -->
-    <div class="card" style="border-color:var(--hotel-light);">
-      <div class="card-title" style="color:var(--hotel);">🏨 新增飯店方案</div>
-      <div class="cart-field">
-        <label class="cart-field-label">飯店方案編號（H- 開頭）</label>
-        <input class="cart-input" id="newHotelId" type="text" placeholder="例：H-001">
-      </div>
-      <div class="cart-field">
-        <label class="cart-field-label">飯店名稱 / 方案名稱</label>
-        <input class="cart-input" id="newHotelName" type="text" placeholder="例：台北君悅 標準雙人房">
-      </div>
-      <div class="cart-field">
-        <label class="cart-field-label">每晚價格</label>
-        <input class="cart-input" id="newHotelPrice" type="number" placeholder="例：3800">
-      </div>
-      <div class="cart-field">
-        <label class="cart-field-label">說明</label>
-        <input class="cart-input" id="newHotelDesc" type="text" placeholder="例：含早餐，需2晚起訂">
-      </div>
-      <button class="checkout-btn" style="margin-top:8px;background:var(--hotel);" onclick="addNewHotelPlan()">🏨 新增飯店方案</button>
-    </div>
-
     <!-- 方案管理 -->
     <div class="card">
       <div class="card-title">📦 方案管理</div>
       <div id="adminPlanList"><div class="empty-state">載入中...</div></div>
+    </div>
+
+    <!-- 新增飯店方案 -->
+    <div class="card" style="border-color:var(--hotel-light);">
+      <div class="card-title" style="color:var(--hotel-dark);">🏨 新增飯店方案</div>
+      <div class="cart-field">
+        <label class="cart-field-label">方案名稱</label>
+        <input class="cart-input" id="newHotelName" type="text" placeholder="例：台北晶華酒店豪華雙人房">
+      </div>
+      <div class="cart-field">
+        <label class="cart-field-label">每晚價格</label>
+        <input class="cart-input" id="newHotelPrice" type="number" placeholder="例：8000">
+      </div>
+      <div class="cart-field">
+        <label class="cart-field-label">說明</label>
+        <input class="cart-input" id="newHotelDesc" type="text" placeholder="例：含早餐，可加床">
+      </div>
+      <button class="checkout-btn" style="margin-top:8px;background:var(--hotel);" onclick="addNewHotelPlan()">🏨 新增飯店方案</button>
+    </div>
+
+    <!-- 飯店方案管理 -->
+    <div class="card" style="border-color:var(--hotel-light);">
+      <div class="card-title" style="color:var(--hotel-dark);">🏨 飯店方案管理</div>
+      <div id="adminHotelPlanList"><div class="empty-state">載入中...</div></div>
     </div>
 
   </div>
@@ -390,34 +386,32 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 
 <!-- 補填資料 Modal -->
 <div class="modal-overlay" id="fillDataModal">
-  <div class="modal-panel">
-    <div class="modal-header">
-      <div class="modal-title">🏨 補填訂房資料</div>
-      <button class="modal-close" onclick="closeFillModal()">✕</button>
-    </div>
-    <div class="modal-info-box" id="fillOrderInfo"></div>
+  <div class="modal-box">
+    <div class="modal-title">🏨 補填入住資料</div>
+    <input type="hidden" id="fillRow">
+    <input type="hidden" id="fillPlanName">
     <div class="modal-row">
-      <div>
+      <div class="modal-field">
         <label class="modal-label">入住日期</label>
         <input class="modal-input" id="fillCheckIn" type="date">
       </div>
-      <div>
+      <div class="modal-field">
         <label class="modal-label">退房日期</label>
         <input class="modal-input" id="fillCheckOut" type="date">
       </div>
     </div>
     <div class="modal-field">
       <label class="modal-label">房型</label>
-      <input class="modal-input" id="fillRoomType" type="text" placeholder="例：標準雙人房">
+      <input class="modal-input" id="fillRoomType" type="text" placeholder="例：標準雙人房、豪華海景房">
     </div>
     <div class="modal-row">
-      <div>
-        <label class="modal-label">大人人數</label>
-        <input class="modal-input" id="fillAdults" type="number" min="1" placeholder="1">
+      <div class="modal-field">
+        <label class="modal-label">大人數</label>
+        <input class="modal-input" id="fillAdults" type="number" min="1" value="2" placeholder="2">
       </div>
-      <div>
-        <label class="modal-label">小孩人數</label>
-        <input class="modal-input" id="fillChildren" type="number" min="0" placeholder="0">
+      <div class="modal-field">
+        <label class="modal-label">小孩數</label>
+        <input class="modal-input" id="fillChildren" type="number" min="0" value="0" placeholder="0">
       </div>
     </div>
     <div class="modal-field">
@@ -425,14 +419,11 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
       <input class="modal-input" id="fillGuestName" type="text" placeholder="主要住客姓名">
     </div>
     <div class="modal-field">
-      <label class="modal-label">住客手機</label>
-      <input class="modal-input" id="fillGuestPhone" type="tel" placeholder="09xxxxxxxx">
+      <label class="modal-label">住客電話</label>
+      <input class="modal-input" id="fillGuestPhone" type="tel" placeholder="聯絡電話">
     </div>
-    <div class="modal-field">
-      <label class="modal-label">備註</label>
-      <input class="modal-input" id="fillRemarks" type="text" placeholder="特殊需求（選填）">
-    </div>
-    <button class="modal-submit-btn" onclick="submitFillData()">✅ 送出訂房資料</button>
+    <button class="modal-submit-btn" onclick="submitFillData()">✅ 送出資料</button>
+    <button class="modal-cancel-btn" onclick="closeFillModal()">取消</button>
   </div>
 </div>
 
@@ -444,7 +435,6 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 
 <script>
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZ_INF8CS_rsn6x98_QPlcJCOLT-K0FU5s9lDpgX2Dj_zcGqJZM-7IiwpG2T60D4tRPA/exec';
-// 開票登記 Sheet Apps Script（訂房訂單寫入這裡）
 const HOTEL_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx82qP9c24F7ckG-ioO-351-5STq7vARjknMlR5uifcXgikH0rctPivswtAd_f5GPmL/exec';
 const NOTIFY_URL = 'https://ticket-api-kohl.vercel.app/api/notify';
 
@@ -469,8 +459,7 @@ const DEFAULT_PLANS = [
 ];
 
 let currentAgent = null;
-let cart = []; // [{ plan, qty, note, isHotel }]
-let fillTargetRow = null; // 補填資料的目標 row
+let cart = []; // [{ plan, qty, note, _isHotel }]
 
 // ── 登入 ──
 function login() {
@@ -503,10 +492,9 @@ function showMain() {
     document.getElementById('tab-admin').style.display = 'block';
   }
   loadAndRenderPlans();
-  loadHotelPlans();
 }
 
-// ── 機票方案 ──
+// ── 方案 ──
 async function loadAndRenderPlans() {
   try {
     const res = await fetch(APPS_SCRIPT_URL + '?type=getPlans');
@@ -525,6 +513,7 @@ async function loadAndRenderPlans() {
       renderPlans(DEFAULT_PLANS);
     }
   } catch(e) {
+    console.log('載入方案失敗，使用預設方案', e);
     renderPlans(DEFAULT_PLANS);
   }
 }
@@ -550,6 +539,7 @@ function planCard(p) {
     const [name, price] = a.split(':');
     return { name: name.trim(), price: Number(price.trim()) };
   }) : [];
+
   const addonHtml = addons.length ? `
     <div class="plan-addons">
       <div class="plan-addon-title">➕ 可加購</div>
@@ -563,6 +553,7 @@ function planCard(p) {
         </div>
       `).join('')}
     </div>` : '';
+
   return `
   <div class="plan-card">
     <div class="plan-left">
@@ -585,44 +576,56 @@ async function loadHotelPlans() {
     const res = await fetch(APPS_SCRIPT_URL + '?type=getHotelPlans');
     const data = await res.json();
     if (data.plans && data.plans.length) {
-      renderHotelPlans(data.plans.map(p => ({
-        id: p['方案編號'],
-        name: p['方案名稱'],
-        price: Number(p['每晚價格']),
-        desc: p['說明'] || '',
-      })));
+      const plans = data.plans.map(p => ({
+        id:     p.id    || p['方案ID']   || '',
+        name:   p.name  || p['方案名稱'] || '',
+        price:  Number(p.price || p['每晚價格']) || 0,
+        desc:   p.desc  || p['說明']     || p['描述'] || '',
+        active: p.active !== false && p['啟用'] !== '停用' && p['狀態'] !== '下架',
+      })).filter(p => p.id && p.active);
+      window._hotelPlans = plans;
+      if (plans.length) {
+        document.getElementById('hotelPlanGrid').innerHTML = plans.map(hotelPlanCard).join('');
+      } else {
+        document.getElementById('hotelPlanGrid').innerHTML = '<div class="empty-state">目前無可用飯店方案</div>';
+      }
     } else {
-      document.getElementById('hotelPlanGrid').innerHTML = '<div class="empty-state">目前尚無飯店方案<br>請管理員新增</div>';
+      document.getElementById('hotelPlanGrid').innerHTML = '<div class="empty-state">目前無飯店方案，請聯絡管理員新增</div>';
     }
   } catch(e) {
-    document.getElementById('hotelPlanGrid').innerHTML = '<div class="empty-state">目前尚無飯店方案<br>請管理員新增</div>';
+    document.getElementById('hotelPlanGrid').innerHTML = '<div class="empty-state">載入失敗，請稍後再試</div>';
   }
 }
 
-function renderHotelPlans(plans) {
-  window._currentHotelPlans = plans;
-  document.getElementById('hotelPlanGrid').innerHTML = plans.length
-    ? plans.map(p => `
-      <div class="hotel-plan-card">
-        <div class="plan-left">
-          <div class="hotel-plan-id">${p.id}</div>
-          <div class="hotel-plan-name">${p.name}</div>
-          <div class="hotel-plan-desc">${p.desc}</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-          <div class="hotel-plan-price">$${p.price.toLocaleString()}<span style="font-size:11px;font-weight:400;">/晚</span></div>
-          <button class="add-hotel-btn" onclick="addHotelToCart('${p.id}')">加入購物車</button>
-        </div>
-      </div>`).join('')
-    : '<div class="empty-state">目前尚無飯店方案</div>';
+function hotelPlanCard(p) {
+  return `
+  <div class="hotel-plan-card">
+    <div class="plan-left">
+      <div class="hotel-plan-id">${p.id}</div>
+      <div class="hotel-plan-name">${p.name}</div>
+      <div class="hotel-plan-desc">${p.desc}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+      <div class="hotel-plan-price">$${p.price.toLocaleString()}<br><span class="hotel-plan-price-sub">/ 晚</span></div>
+      <button class="add-hotel-btn" onclick="addHotelToCart('${p.id}')">加入購物車</button>
+    </div>
+  </div>`;
 }
 
-// ── 購物車（機票）──
+// ── 購物車 ──
 function addAddonToCart(planId, addonName, addonPrice) {
   const addonId = `${planId}-${addonName}`;
   const existing = cart.find(c => c.plan.id === addonId);
-  if (existing) { existing.qty++; }
-  else { cart.push({ plan: { id: addonId, name: `${addonName}（${planId}加購）`, price: addonPrice }, qty: 1, note: '', isHotel: false }); }
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({
+      plan: { id: addonId, name: `${addonName}（${planId}加購）`, price: addonPrice },
+      qty: 1,
+      note: '',
+      _isHotel: false
+    });
+  }
   updateCartBadge();
   const btn = event.target;
   btn.textContent = '✅';
@@ -634,35 +637,43 @@ function addToCart(planId) {
   const plans = window._currentPlans || DEFAULT_PLANS;
   const plan = plans.find(p => p.id === planId);
   if (!plan) return;
-  const existing = cart.find(c => c.plan.id === planId);
-  if (existing) { existing.qty++; }
-  else { cart.push({ plan, qty: 1, note: '', isHotel: false }); }
+  const existing = cart.find(c => c.plan.id === planId && !c._isHotel);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ plan, qty: 1, note: '', _isHotel: false });
+  }
   updateCartBadge();
   const btn = event.target;
   btn.textContent = '✅ 已加入';
   setTimeout(() => { btn.textContent = '加入購物車'; }, 1000);
 }
 
-// ── 購物車（飯店）──
 function addHotelToCart(planId) {
-  const plans = window._currentHotelPlans || [];
+  const plans = window._hotelPlans || [];
   const plan = plans.find(p => p.id === planId);
   if (!plan) return;
-  const existing = cart.find(c => c.plan.id === planId);
-  if (existing) { existing.qty++; }
-  else { cart.push({ plan: {...plan, priceUnit: '/晚'}, qty: 1, note: '', isHotel: true }); }
+  const existing = cart.find(c => c.plan.id === planId && c._isHotel);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ plan, qty: 1, note: '', _isHotel: true });
+  }
   updateCartBadge();
   const btn = event.target;
   btn.textContent = '✅ 已加入';
   setTimeout(() => { btn.textContent = '加入購物車'; }, 1000);
-  openCart();
 }
 
 function updateCartBadge() {
   const total = cart.reduce((s, c) => s + c.qty, 0);
   const badge = document.getElementById('cartFabBadge');
-  if (total > 0) { badge.style.display = 'flex'; badge.textContent = total; }
-  else { badge.style.display = 'none'; }
+  if (total > 0) {
+    badge.style.display = 'flex';
+    badge.textContent = total;
+  } else {
+    badge.style.display = 'none';
+  }
 }
 
 function openCart() {
@@ -682,14 +693,15 @@ function renderCart() {
     el.innerHTML = '<div class="cart-empty">購物車是空的 🛒<br>請先選擇方案加入</div>';
     return;
   }
+  const hasHotel = cart.some(c => c._isHotel);
   const total = cart.reduce((s, c) => s + c.plan.price * c.qty, 0);
-  el.innerHTML = cart.map((c, i) => `
-    <div class="cart-item${c.isHotel ? ' hotel-item' : ''}">
+  const hotelNotice = hasHotel ? `<div class="cart-hotel-notice">🏨 飯店訂單說明：送出後狀態為「待補資料」，請在一週內至「我的訂單」補填入住資料（入住日期、房型、住客等）。</div>` : '';
+  el.innerHTML = hotelNotice + cart.map((c, i) => `
+    <div class="cart-item${c._isHotel ? ' hotel' : ''}">
       <div class="cart-item-header">
         <div>
-          <div class="cart-item-id${c.isHotel ? ' hotel' : ''}">${c.isHotel ? '🏨 ' : ''}${c.plan.id}</div>
+          <div class="cart-item-id${c._isHotel ? ' hotel' : ''}">${c._isHotel ? '🏨 ' : ''}${c.plan.id}</div>
           <div class="cart-item-name">${c.plan.name}</div>
-          ${c.isHotel ? '<div style="font-size:10px;color:#5878a0;">下單後補填入住資料</div>' : ''}
         </div>
         <button class="cart-remove" onclick="removeFromCart(${i})">🗑</button>
       </div>
@@ -699,9 +711,9 @@ function renderCart() {
           <div class="qty-num">${c.qty}</div>
           <button class="qty-btn" onclick="changeQty(${i}, 1)">＋</button>
         </div>
-        <div class="cart-item-price${c.isHotel ? ' hotel' : ''}">$${(c.plan.price * c.qty).toLocaleString()}${c.isHotel ? '<span style="font-size:10px;font-weight:400;">/晚</span>' : ''}</div>
+        <div class="cart-item-price${c._isHotel ? ' hotel' : ''}">$${(c.plan.price * c.qty).toLocaleString()}${c._isHotel ? '<span style="font-size:10px;font-weight:400;"> /晚</span>' : ''}</div>
       </div>
-      <textarea class="cart-note-field" placeholder="備註（選填）" onchange="updateNote(${i}, this.value)">${c.note}</textarea>
+      <textarea class="cart-note-field" placeholder="${c._isHotel ? '備註（選填）' : '此項目備註（選填）'}" onchange="updateNote(${i}, this.value)">${c.note}</textarea>
     </div>
   `).join('') + `
   <div class="cart-total-row">
@@ -710,9 +722,21 @@ function renderCart() {
   </div>`;
 }
 
-function removeFromCart(i) { cart.splice(i, 1); updateCartBadge(); renderCart(); }
-function changeQty(i, delta) { cart[i].qty = Math.max(1, cart[i].qty + delta); updateCartBadge(); renderCart(); }
-function updateNote(i, val) { cart[i].note = val; }
+function removeFromCart(i) {
+  cart.splice(i, 1);
+  updateCartBadge();
+  renderCart();
+}
+
+function changeQty(i, delta) {
+  cart[i].qty = Math.max(1, cart[i].qty + delta);
+  updateCartBadge();
+  renderCart();
+}
+
+function updateNote(i, val) {
+  cart[i].note = val;
+}
 
 // ── 結帳 ──
 async function checkout() {
@@ -725,38 +749,59 @@ async function checkout() {
   const total = cart.reduce((s, c) => s + c.plan.price * c.qty, 0);
   const timestamp = new Date().toISOString();
 
-  // 機票訂單 → 業務下單 Sheet
-  const flightItems = cart.filter(c => !c.isHotel);
+  const flightItems = cart.filter(c => !c._isHotel);
+  const hotelItems = cart.filter(c => c._isHotel);
+
+  // 一般機票訂單
   for (const item of flightItems) {
     const order = {
-      type: 'order', timestamp,
-      agentId: currentAgent.id, agentName: currentAgent.name,
-      planId: item.plan.id, planName: item.plan.name,
-      quantity: item.qty, total: item.plan.price * item.qty,
-      clientName, remarks: item.note || remarks,
+      type: 'order',
+      timestamp,
+      agentId: currentAgent.id,
+      agentName: currentAgent.name,
+      planId: item.plan.id,
+      planName: item.plan.name,
+      quantity: item.qty,
+      total: item.plan.price * item.qty,
+      clientName,
+      remarks: item.note || remarks,
     };
-    await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(order) });
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order)
+    });
   }
 
-  // 飯店訂單 → 開票登記 Sheet「訂房訂單」分頁
-  const hotelItems = cart.filter(c => c.isHotel);
+  // 飯店訂單（每晚 × 晚數）
   for (const item of hotelItems) {
-    const hotelOrder = {
-      type: 'hotelOrder', timestamp,
+    const order = {
+      type: 'hotelOrder',
+      timestamp,
       agentId: currentAgent.id,
-      planId: item.plan.id, planName: item.plan.name,
+      agentName: currentAgent.name,
+      planId: item.plan.id,
+      planName: item.plan.name,
       nights: item.qty,
       pricePerNight: item.plan.price,
       total: item.plan.price * item.qty,
-      clientName, remarks: item.note || remarks,
-      status: '待補資料',
+      clientName,
+      remarks: item.note || remarks,
     };
-    await fetch(HOTEL_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(hotelOrder) });
+    await fetch(HOTEL_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order)
+    });
   }
 
   // LINE 通知
-  const allLines = cart.map(c => `  ${c.isHotel ? '🏨' : '✈️'} ${c.plan.id} ${c.plan.name} × ${c.qty}${c.isHotel ? '晚' : '組'} = $${(c.plan.price * c.qty).toLocaleString()}${c.isHotel ? '（待補入住資料）' : ''}${c.note ? ` (${c.note})` : ''}`).join('\n');
-  const msg = `📦 新訂單通知\n━━━━━━━━━━━━━\n🧑‍💼 業務：${currentAgent.id}\n\n${allLines}\n\n💰 總金額：$${total.toLocaleString()}${clientName ? `\n👤 客戶：${clientName}` : ''}${remarks ? `\n📝 備註：${remarks}` : ''}`;
+  const flightLines = flightItems.map(c => `  ✈️ ${c.plan.id} ${c.plan.name} × ${c.qty} 組 = $${(c.plan.price * c.qty).toLocaleString()}${c.note ? ` (${c.note})` : ''}`).join('\n');
+  const hotelLines = hotelItems.map(c => `  🏨 ${c.plan.name} × ${c.qty} 晚 = $${(c.plan.price * c.qty).toLocaleString()}${c.note ? ` (${c.note})` : ''}`).join('\n');
+  const allLines = [flightLines, hotelLines].filter(Boolean).join('\n');
+  const msg = `📦 新訂單通知\n━━━━━━━━━━━━━\n🧑‍💼 業務：${currentAgent.id}\n\n${allLines}\n\n💰 訂單總金額：$${total.toLocaleString()}${clientName ? `\n👤 客戶：${clientName}` : ''}${remarks ? `\n📝 備註：${remarks}` : ''}${hotelItems.length ? '\n\n⚠️ 飯店訂單待補入住資料' : ''}`;
 
   await fetch(NOTIFY_URL, {
     method: 'POST',
@@ -765,8 +810,8 @@ async function checkout() {
   });
 
   hideLoading();
-  const hotelNote = hotelItems.length ? '\n\n🏨 飯店訂單請一週內到「我的訂單」補填入住資料！' : '';
-  alert(`✅ 訂單送出成功！\n\n總金額：$${total.toLocaleString()}${hotelNote}`);
+  const hotelMsg = hotelItems.length ? '\n\n🏨 飯店訂單已送出，請至「我的訂單」補填入住資料' : '';
+  alert(`✅ 訂單送出成功！\n\n總金額：$${total.toLocaleString()}${hotelMsg}`);
 
   cart = [];
   document.getElementById('clientName').value = '';
@@ -779,54 +824,51 @@ async function loadOrders() {
   document.getElementById('orderList').innerHTML = '<div class="empty-state">載入中...</div>';
   try {
     // 機票訂單
-    const res1 = await fetch(APPS_SCRIPT_URL + `?type=getOrders&agentId=${currentAgent.id}`);
-    const data1 = await res1.json();
-    const flightOrders = (data1.orders || []).map(o => ({...o, _type: 'flight'}));
+    const res = await fetch(APPS_SCRIPT_URL + `?type=getOrders&agentId=${currentAgent.id}`);
+    const data = await res.json();
+    const flightOrders = (data.orders || []).map(o => ({ ...o, _type: 'flight' }));
 
     // 飯店訂單
     let hotelOrders = [];
     try {
-      const res2 = await fetch(HOTEL_SCRIPT_URL + `?type=getHotelOrders&agentId=${currentAgent.id}`);
-      const data2 = await res2.json();
-      hotelOrders = (data2.orders || []).map(o => ({...o, _type: 'hotel'}));
-    } catch(e) {}
+      const hRes = await fetch(HOTEL_SCRIPT_URL + `?type=getHotelOrders&agentId=${currentAgent.id}`);
+      const hData = await hRes.json();
+      hotelOrders = (hData.orders || []).map(o => ({ ...o, _type: 'hotel' }));
+    } catch(e) { /* 飯店訂單載入失敗不影響機票訂單 */ }
 
-    const all = [...flightOrders, ...hotelOrders].sort((a, b) => {
-      const ta = a['時間'] || '';
-      const tb = b['時間'] || '';
+    // 合併並依時間排序（新→舊）
+    const allOrders = [...flightOrders, ...hotelOrders].sort((a, b) => {
+      const ta = a['時間'] || a.timestamp || '';
+      const tb = b['時間'] || b.timestamp || '';
       return tb.localeCompare(ta);
     });
 
-    if (!all.length) {
+    if (!allOrders.length) {
       document.getElementById('orderList').innerHTML = '<div class="empty-state">還沒有訂單紀錄 📦</div>';
       return;
     }
 
-    document.getElementById('orderList').innerHTML = all.map(o => {
+    document.getElementById('orderList').innerHTML = allOrders.map(o => {
       if (o._type === 'hotel') {
-        const status = o['狀態'] || '待補資料';
-        const statusClass = status === '資料已填' ? 'status-data-filled' : 'status-need-data';
-        const hotelDataHtml = status === '資料已填' ? `
-          <div class="hotel-data-box">
-            📅 入住：${o['入住日期'] || '-'}　退房：${o['退房日期'] || '-'}<br>
-            🛏 房型：${o['房型'] || '-'}　👥 大人${o['大人人數'] || 0}位 小孩${o['小孩人數'] || 0}位<br>
-            👤 住客：${o['住客姓名'] || '-'}　📱 ${o['住客手機'] || '-'}
-          </div>` : '';
+        const status = o.status || '待補資料';
+        const statusClass = status === '資料已填' ? 'status-hotel-filled' : 'status-hotel-waiting';
+        const fillBtn = status !== '資料已填' ? `<button class="fill-data-btn" onclick="openFillModal(${o.row}, '${escHtml(o.planName || '')}')">✏️ 補填資料</button>` : '';
         return `
-          <div class="order-item hotel-order">
+          <div class="order-item hotel">
             <div class="order-header">
               <div>
-                <div class="order-no">🏨 ${o['時間'] || ''}</div>
-                <div class="order-plans">${o['方案名稱'] || ''}</div>
+                <div class="order-no">🏨 ${o.timestamp || ''}</div>
+                <div class="order-plans">${escHtml(o.planName || '')}</div>
               </div>
               <div class="order-status ${statusClass}">${status}</div>
             </div>
             <div class="order-detail">
-              🌙 ${o['晚數'] || ''}晚${o['客戶姓名'] ? ` · 👤 ${o['客戶姓名']}` : ''}${o['備註'] ? ` · 📝 ${o['備註']}` : ''}
+              🌙 ${o.nights || 0}晚${o.clientName ? ` · 👤 ${escHtml(o.clientName)}` : ''}${o.remarks ? ` · 📝 ${escHtml(o.remarks)}` : ''}
+              ${o.checkIn ? `<br>📅 入住：${o.checkIn} ～ ${o.checkOut}` : ''}
+              ${o.guestName ? `<br>🧑 住客：${escHtml(o.guestName)} ${o.guestPhone || ''}` : ''}
             </div>
-            ${hotelDataHtml}
-            <div class="order-total" style="color:var(--hotel);">$${Number(o['總金額'] || 0).toLocaleString()}</div>
-            ${status !== '資料已填' ? `<button class="fill-data-btn" onclick="openFillModal(${o['_row']}, '${(o['方案名稱']||'').replace(/'/g,"\\'")}', '${(o['客戶姓名']||'').replace(/'/g,"\\'")}')">📝 補填入住資料</button>` : ''}
+            <div class="order-total hotel">$${Number(o.total || 0).toLocaleString()}</div>
+            ${fillBtn}
           </div>`;
       } else {
         return `
@@ -850,84 +892,76 @@ async function loadOrders() {
   }
 }
 
-// ── 補填資料 Modal ──
-function openFillModal(row, planName, clientName) {
-  fillTargetRow = row;
-  document.getElementById('fillOrderInfo').innerHTML = `🏨 ${planName}${clientName ? `　👤 ${clientName}` : ''}`;
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── 補填資料 ──
+function openFillModal(row, planName) {
+  document.getElementById('fillRow').value = row;
+  document.getElementById('fillPlanName').value = planName;
   document.getElementById('fillCheckIn').value = '';
   document.getElementById('fillCheckOut').value = '';
   document.getElementById('fillRoomType').value = '';
-  document.getElementById('fillAdults').value = '1';
+  document.getElementById('fillAdults').value = '2';
   document.getElementById('fillChildren').value = '0';
-  document.getElementById('fillGuestName').value = clientName || '';
+  document.getElementById('fillGuestName').value = '';
   document.getElementById('fillGuestPhone').value = '';
-  document.getElementById('fillRemarks').value = '';
   document.getElementById('fillDataModal').classList.add('show');
 }
 
 function closeFillModal() {
   document.getElementById('fillDataModal').classList.remove('show');
-  fillTargetRow = null;
 }
 
 async function submitFillData() {
+  const row = Number(document.getElementById('fillRow').value);
   const checkIn = document.getElementById('fillCheckIn').value;
   const checkOut = document.getElementById('fillCheckOut').value;
   const roomType = document.getElementById('fillRoomType').value.trim();
-  const adults = document.getElementById('fillAdults').value;
-  const children = document.getElementById('fillChildren').value;
+  const adults = Number(document.getElementById('fillAdults').value) || 0;
+  const children = Number(document.getElementById('fillChildren').value) || 0;
   const guestName = document.getElementById('fillGuestName').value.trim();
   const guestPhone = document.getElementById('fillGuestPhone').value.trim();
-  const remarks = document.getElementById('fillRemarks').value.trim();
 
-  if (!checkIn || !checkOut || !roomType || !guestName) {
-    alert('請填寫入住日期、退房日期、房型和住客姓名！');
-    return;
-  }
+  if (!checkIn || !checkOut) { alert('請填寫入住日期和退房日期'); return; }
+  if (!guestName) { alert('請填寫住客姓名'); return; }
 
   closeFillModal();
   showLoading('送出資料中...');
 
-  const payload = {
-    type: 'fillHotelData',
-    row: fillTargetRow,
-    checkIn, checkOut, roomType,
-    adults: Number(adults),
-    children: Number(children),
-    guestName, guestPhone, remarks,
-    agentId: currentAgent.id,
-  };
-
-  await fetch(HOTEL_SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-
-  // LINE 通知
-  const msg = `🏨 訂房資料補填\n━━━━━━━━━━━━━\n🧑‍💼 業務：${currentAgent.id}\n📅 入住：${checkIn}　退房：${checkOut}\n🛏 房型：${roomType}\n👥 大人${adults}位 小孩${children}位\n👤 住客：${guestName}　📱 ${guestPhone}${remarks ? `\n📝 備註：${remarks}` : ''}`;
-  await fetch(NOTIFY_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type: 'registration', message: msg })
-  });
-
-  hideLoading();
-  alert('✅ 訂房資料送出成功！');
-  loadOrders();
+  try {
+    await fetch(HOTEL_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'fillHotelData',
+        row, checkIn, checkOut, roomType, adults, children, guestName, guestPhone
+      })
+    });
+    hideLoading();
+    alert('✅ 資料補填成功！');
+    loadOrders();
+  } catch(e) {
+    hideLoading();
+    alert('送出失敗，請稍後再試');
+  }
 }
 
 // ── Tab ──
 function switchTab(tab) {
-  ['order','hotel','records','admin'].forEach(t => {
-    const el = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
-    if (el) el.style.display = t === tab ? 'block' : 'none';
-    const tabEl = document.getElementById(`tab-${t}`);
-    if (tabEl) tabEl.classList.toggle('active', t === tab);
-  });
+  document.getElementById('tabOrder').style.display = tab === 'order' ? 'block' : 'none';
+  document.getElementById('tabHotel').style.display = tab === 'hotel' ? 'block' : 'none';
+  document.getElementById('tabRecords').style.display = tab === 'records' ? 'block' : 'none';
+  document.getElementById('tabAdmin').style.display = tab === 'admin' ? 'block' : 'none';
+  document.getElementById('tab-order').classList.toggle('active', tab === 'order');
+  document.getElementById('tab-hotel').classList.toggle('active', tab === 'hotel');
+  document.getElementById('tab-records').classList.toggle('active', tab === 'records');
+  document.getElementById('tab-admin').classList.toggle('active', tab === 'admin');
+  if (tab === 'hotel') loadHotelPlans();
   if (tab === 'records') loadOrders();
-  if (tab === 'admin') { loadAllOrders(); loadAdminPlans(); }
+  if (tab === 'admin') { loadAllOrders(); loadAdminPlans(); loadAdminHotelPlans(); }
 }
 
 // ── 管理員：所有訂單 ──
@@ -945,6 +979,7 @@ async function loadAllOrders() {
       document.getElementById('allOrderList').innerHTML = '<div class="empty-state">沒有訂單紀錄</div>';
       return;
     }
+
     const groups = {};
     orders.forEach(o => {
       const timeStr = o['時間'] ? String(o['時間']) : '';
@@ -953,7 +988,9 @@ async function loadAllOrders() {
       if (!groups[dateStr]) groups[dateStr] = [];
       groups[dateStr].push(o);
     });
+
     const makeId = (date) => date.replace(/[\\/:\s]/g, '_');
+
     document.getElementById('allOrderList').innerHTML = Object.entries(groups).map(([date, items]) => {
       const id = makeId(date);
       return `
@@ -996,17 +1033,31 @@ async function loadAllOrders() {
 window.toggleGroup = function(id) {
   const body = document.getElementById(`group-${id}`);
   const arrow = document.getElementById(`arrow-${id}`);
-  if (body.style.display === 'none') { body.style.display = 'block'; arrow.textContent = '▼'; }
-  else { body.style.display = 'none'; arrow.textContent = '▶'; }
+  if (body.style.display === 'none') {
+    body.style.display = 'block';
+    arrow.textContent = '▼';
+  } else {
+    body.style.display = 'none';
+    arrow.textContent = '▶';
+  }
 }
 
+// ── 確認訂單 ──
 async function confirmOrder(row) {
   showLoading('確認訂單中...');
   try {
-    await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'confirmOrder', row }) });
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'confirmOrder', row })
+    });
     hideLoading();
     loadAllOrders();
-  } catch(e) { hideLoading(); alert('確認失敗，請稍後再試'); }
+  } catch(e) {
+    hideLoading();
+    alert('確認失敗，請稍後再試');
+  }
 }
 
 // ── 管理員：方案管理 ──
@@ -1027,9 +1078,40 @@ async function loadAdminPlans() {
         <button class="delist-btn" onclick="togglePlan('${p['方案編號']}', '${p['狀態']}')">${p['狀態'] === '上架' ? '下架' : '上架'}</button>
       </div>
     `).join('');
-  } catch(e) { document.getElementById('adminPlanList').innerHTML = '<div class="empty-state">載入失敗</div>'; }
+  } catch(e) {
+    document.getElementById('adminPlanList').innerHTML = '<div class="empty-state">載入失敗</div>';
+  }
 }
 
+// ── 管理員：飯店方案管理 ──
+async function loadAdminHotelPlans() {
+  document.getElementById('adminHotelPlanList').innerHTML = '<div class="empty-state">載入中...</div>';
+  try {
+    const res = await fetch(APPS_SCRIPT_URL + '?type=getHotelPlans');
+    const data = await res.json();
+    const plans = data.plans || [];
+    if (!plans.length) { document.getElementById('adminHotelPlanList').innerHTML = '<div class="empty-state">沒有飯店方案</div>'; return; }
+    document.getElementById('adminHotelPlanList').innerHTML = plans.map(p => {
+      const id = p.id || p['方案ID'] || '';
+      const name = p.name || p['方案名稱'] || '';
+      const price = Number(p.price || p['每晚價格']) || 0;
+      const active = p.active !== false && p['啟用'] !== '停用' && p['狀態'] !== '下架';
+      return `
+        <div class="plan-manage-item">
+          <div class="plan-manage-left">
+            <div class="plan-manage-id" style="color:var(--hotel);">${id}</div>
+            <div class="plan-manage-name">${name}</div>
+          </div>
+          <div class="plan-manage-price" style="color:var(--hotel);">$${price.toLocaleString()}/晚</div>
+          <button class="hotel-delist-btn" onclick="toggleHotelPlan('${id}')">${active ? '下架' : '上架'}</button>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    document.getElementById('adminHotelPlanList').innerHTML = '<div class="empty-state">載入失敗</div>';
+  }
+}
+
+// ── 新增方案 ──
 async function addNewPlan() {
   const id = document.getElementById('newPlanId').value.trim();
   const name = document.getElementById('newPlanName').value.trim();
@@ -1038,40 +1120,88 @@ async function addNewPlan() {
   if (!id || !name || !price) { alert('請填寫方案編號、名稱和單價！'); return; }
   showLoading('新增方案中...');
   try {
-    await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'addPlan', id, name, price: Number(price), desc }) });
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'addPlan', id, name, price: Number(price), desc })
+    });
     hideLoading();
-    ['newPlanId','newPlanName','newPlanPrice','newPlanDesc'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('newPlanId').value = '';
+    document.getElementById('newPlanName').value = '';
+    document.getElementById('newPlanPrice').value = '';
+    document.getElementById('newPlanDesc').value = '';
     alert('✅ 方案新增成功！');
     loadAdminPlans();
     loadAndRenderPlans();
-  } catch(e) { hideLoading(); alert('新增失敗，請稍後再試'); }
+  } catch(e) {
+    hideLoading();
+    alert('新增失敗，請稍後再試');
+  }
 }
 
+// ── 新增飯店方案 ──
 async function addNewHotelPlan() {
-  const id = document.getElementById('newHotelId').value.trim();
   const name = document.getElementById('newHotelName').value.trim();
   const price = document.getElementById('newHotelPrice').value.trim();
   const desc = document.getElementById('newHotelDesc').value.trim();
-  if (!id || !name || !price) { alert('請填寫飯店方案編號、名稱和每晚價格！'); return; }
+  if (!name || !price) { alert('請填寫方案名稱和每晚價格！'); return; }
   showLoading('新增飯店方案中...');
   try {
-    await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'addHotelPlan', id, name, price: Number(price), desc }) });
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'addHotelPlan', name, price: Number(price), desc })
+    });
     hideLoading();
-    ['newHotelId','newHotelName','newHotelPrice','newHotelDesc'].forEach(i => document.getElementById(i).value = '');
+    document.getElementById('newHotelName').value = '';
+    document.getElementById('newHotelPrice').value = '';
+    document.getElementById('newHotelDesc').value = '';
     alert('✅ 飯店方案新增成功！');
-    loadHotelPlans();
-  } catch(e) { hideLoading(); alert('新增失敗，請稍後再試'); }
+    loadAdminHotelPlans();
+  } catch(e) {
+    hideLoading();
+    alert('新增失敗，請稍後再試');
+  }
 }
 
+// ── 上架/下架方案 ──
 async function togglePlan(planId, currentStatus) {
   const newStatus = currentStatus === '上架' ? '下架' : '上架';
   showLoading('更新中...');
   try {
-    await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'togglePlan', planId, status: newStatus }) });
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'togglePlan', planId, status: newStatus })
+    });
     hideLoading();
     loadAdminPlans();
     loadAndRenderPlans();
-  } catch(e) { hideLoading(); alert('更新失敗，請稍後再試'); }
+  } catch(e) {
+    hideLoading();
+    alert('更新失敗，請稍後再試');
+  }
+}
+
+// ── 飯店方案上架/下架 ──
+async function toggleHotelPlan(planId) {
+  showLoading('更新中...');
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'toggleHotelPlan', planId })
+    });
+    hideLoading();
+    loadAdminHotelPlans();
+  } catch(e) {
+    hideLoading();
+    alert('更新失敗，請稍後再試');
+  }
 }
 
 function showLoading(text) { document.getElementById('loadingText').textContent = text; document.getElementById('loadingOverlay').classList.add('show'); }
