@@ -84,9 +84,11 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .plan-id { font-size: 10px; font-weight: 700; color: var(--subtext); letter-spacing: 1px; margin-bottom: 3px; }
 .plan-name { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
 .plan-desc { font-size: 11px; color: var(--subtext); }
-.plan-stock { font-size: 11px; font-weight: 700; margin-top: 4px; }
+.plan-stock { font-size: 13px; font-weight: 700; margin-top: 4px; }
 .plan-stock.low { color: #c84030; }
 .plan-stock.ok { color: #5a8a40; }
+.plan-stock.sold-out { color: #c84030; }
+.add-cart-btn:disabled { background: #ccc; color: #888; cursor: not-allowed; opacity: 0.7; }
 .plan-price { font-size: 16px; font-weight: 900; color: var(--brown); white-space: nowrap; }
 .add-cart-btn { background: var(--brown); color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; white-space: nowrap; flex-shrink: 0; }
 .add-cart-btn:active { background: var(--dark-brown); }
@@ -586,9 +588,15 @@ function planCard(p) {
 
   // 庫存顯示
   var stockHtml = '';
+  var isSoldOut = false;
   if (p.stock !== null && p.stock !== undefined) {
-    var isLow = p.stock <= 3;
-    stockHtml = '<div class="plan-stock ' + (isLow ? 'low' : 'ok') + '">剩餘 ' + p.stock + ' 組</div>';
+    if (p.stock <= 0) {
+      stockHtml = '<div class="plan-stock sold-out">已售完</div>';
+      isSoldOut = true;
+    } else {
+      var isLow = p.stock <= 3;
+      stockHtml = '<div class="plan-stock ' + (isLow ? 'low' : 'ok') + '">' + p.stock + '</div>';
+    }
   }
 
   return '<div class="plan-card">' +
@@ -600,7 +608,7 @@ function planCard(p) {
     '</div>' +
     '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">' +
     '<div class="plan-price">$' + p.price.toLocaleString() + '</div>' +
-    '<button class="add-cart-btn" onclick="addToCart(\'' + p.id + '\')">加入購物車</button>' +
+    '<button class="add-cart-btn" ' + (isSoldOut ? 'disabled' : 'onclick="addToCart(\'' + p.id + '\')"') + '>' + (isSoldOut ? '已售完' : '加入購物車') + '</button>' +
     '</div>' +
     '</div>' + addonHtml;
 }
