@@ -4,15 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <script>
-  // 自動清除快取
+  // 強制清除快取（每次開啟都重新載入）
   (function() {
-    const _ts = new URL(window.location.href).searchParams.get('_ts');
-    const _now = Date.now().toString().slice(0, 8);
-    if (_ts !== _now) {
-      const _url = new URL(window.location.href);
-      _url.searchParams.set('_ts', _now);
-      window.location.replace(_url.toString());
+    const key = '_v';
+    const now = Date.now().toString(); // 完整毫秒時間戳，每次都不同
+    const url = new URL(window.location.href);
+    if (url.searchParams.get(key) !== now.slice(0, 10)) {
+      url.searchParams.set(key, now.slice(0, 10));
+      window.location.replace(url.toString());
     }
   })();
 </script>
@@ -62,8 +64,6 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .top-bar-brand { color: #fff8ee; font-size: 14px; font-weight: 900; }
 .top-bar-agent { color: rgba(255,248,238,0.7); font-size: 11px; margin-top: 2px; }
 .top-bar-right { display: flex; align-items: center; gap: 10px; }
-.cart-btn { position: relative; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff8ee; font-size: 20px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.cart-badge { position: absolute; top: -4px; right: -4px; background: #e84030; color: #fff; font-size: 10px; font-weight: 900; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; display: none; }
 .logout-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff8ee; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
 
 /* ── Tabs ── */
@@ -84,6 +84,9 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .plan-id { font-size: 10px; font-weight: 700; color: var(--subtext); letter-spacing: 1px; margin-bottom: 3px; }
 .plan-name { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
 .plan-desc { font-size: 11px; color: var(--subtext); }
+.plan-stock { font-size: 11px; font-weight: 700; margin-top: 4px; }
+.plan-stock.low { color: #c84030; }
+.plan-stock.ok { color: #5a8a40; }
 .plan-price { font-size: 16px; font-weight: 900; color: var(--brown); white-space: nowrap; }
 .add-cart-btn { background: var(--brown); color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; white-space: nowrap; flex-shrink: 0; }
 .add-cart-btn:active { background: var(--dark-brown); }
@@ -137,7 +140,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .order-item { background: #fff8ee; border: 1.5px solid var(--light-brown); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
 .order-item.hotel { background: var(--hotel-bg); border-color: var(--hotel-light); }
 .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-.order-no { font-size: 11px; font-weight: 700; color: var(--subtext); margin-bottom: 4px; }
+.order-date { font-size: 11px; font-weight: 700; color: var(--subtext); margin-bottom: 4px; }
 .order-plans { font-size: 13px; font-weight: 800; color: var(--text); }
 .order-status { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 10px; flex-shrink: 0; }
 .status-pending { background: #fff8ee; color: var(--subtext); border: 1px solid var(--light-brown); }
@@ -178,13 +181,15 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 .hotel-delist-btn { background: #e8f0ff; color: var(--hotel); border: 1px solid var(--hotel-light); border-radius: 8px; padding: 5px 12px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
 
 /* ── 加購項目 ── */
-.plan-addons { background: #f0f8e8; border: 1.5px solid #90c870; border-radius: 10px; padding: 12px 14px; margin-top: -4px; border-top: none; border-radius: 0 0 10px 10px; }
+.plan-addons { background: #f0f8e8; border: 1.5px solid #90c870; border-radius: 0 0 10px 10px; padding: 12px 14px; margin-top: -4px; }
 .plan-addon-title { font-size: 10px; font-weight: 800; color: #4a8a38; letter-spacing: 1px; margin-bottom: 8px; }
 .plan-addon-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #c0e0b0; }
 .plan-addon-item:last-child { border-bottom: none; padding-bottom: 0; }
 .plan-addon-name { font-size: 12px; color: #3a6020; font-weight: 600; }
 .plan-addon-price { font-size: 13px; font-weight: 800; color: #4a8a38; }
 .add-addon-btn { background: #4a8a38; color: #fff; border: none; border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; white-space: nowrap; }
+
+/* ── 訂單群組 ── */
 .order-group { margin-bottom: 10px; border: 1.5px solid var(--light-brown); border-radius: 12px; overflow: hidden; }
 .order-group-header { background: #fff8ee; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 13px; color: var(--text); }
 .order-group-header:hover { background: #fef5e6; }
@@ -407,11 +412,11 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
     <div class="modal-row">
       <div class="modal-field">
         <label class="modal-label">大人數</label>
-        <input class="modal-input" id="fillAdults" type="number" min="1" value="2" placeholder="2">
+        <input class="modal-input" id="fillAdults" type="number" min="1" value="2">
       </div>
       <div class="modal-field">
         <label class="modal-label">小孩數</label>
-        <input class="modal-input" id="fillChildren" type="number" min="0" value="0" placeholder="0">
+        <input class="modal-input" id="fillChildren" type="number" min="0" value="0">
       </div>
     </div>
     <div class="modal-field">
@@ -434,6 +439,9 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-heigh
 </div>
 
 <script>
+/* ── 版本號：每次部署都要改這個數字 ── */
+var BUILD = '20261008-v2';
+
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZ_INF8CS_rsn6x98_QPlcJCOLT-K0FU5s9lDpgX2Dj_zcGqJZM-7IiwpG2T60D4tRPA/exec';
 const HOTEL_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx82qP9c24F7ckG-ioO-351-5STq7vARjknMlR5uifcXgikH0rctPivswtAd_f5GPmL/exec';
 const NOTIFY_URL = 'https://ticket-api-kohl.vercel.app/api/notify';
@@ -448,24 +456,36 @@ const AGENTS = {
 };
 
 const DEFAULT_PLANS = [
-  { id: 'S-EC',    name: '短線經濟艙 × 1人',       price: 5500,  desc: '32個短線航點任選，出發前再選', type: 'short', addons: '' },
-  { id: 'S-BU',    name: '短線商務艙 × 1人',       price: 12500, desc: '32個短線航點任選，出發前再選', type: 'short', addons: '' },
-  { id: 'S-EC4',   name: '短線經濟艙 × 4人組',     price: 20000, desc: '32個短線航點任選，出發前再選', type: 'short', addons: '' },
-  { id: 'S-BU4',   name: '短線商務艙 × 4人組',     price: 48000, desc: '32個短線航點任選，出發前再選', type: 'short', addons: '' },
-  { id: 'L-EU-EC', name: '歐洲線經濟艙 × 1人',     price: 11000, desc: '20個歐洲航點任選，出發前再選', type: 'long',  addons: '' },
-  { id: 'L-EU-BU', name: '歐洲線商務艙 × 1人',     price: 28500, desc: '20個歐洲航點任選，出發前再選', type: 'long',  addons: '' },
-  { id: 'L-OT-EC', name: '非歐洲長線經濟艙 × 1人', price: 9900,  desc: '9個非歐洲航點任選，出發前再選', type: 'long', addons: '' },
-  { id: 'L-OT-BU', name: '非歐洲長線商務艙 × 1人', price: 25000, desc: '9個非歐洲航點任選，出發前再選', type: 'long', addons: '' },
+  { id: 'S-EC',    name: '短線經濟艙 × 1人',       price: 5500,  desc: '32個短線航點任選，出發前再選', type: 'short', addons: '', stock: null },
+  { id: 'S-BU',    name: '短線商務艙 × 1人',       price: 12500, desc: '32個短線航點任選，出發前再選', type: 'short', addons: '', stock: null },
+  { id: 'S-EC4',   name: '短線經濟艙 × 4人組',     price: 20000, desc: '32個短線航點任選，出發前再選', type: 'short', addons: '', stock: null },
+  { id: 'S-BU4',   name: '短線商務艙 × 4人組',     price: 48000, desc: '32個短線航點任選，出發前再選', type: 'short', addons: '', stock: null },
+  { id: 'L-EU-EC', name: '歐洲線經濟艙 × 1人',     price: 11000, desc: '20個歐洲航點任選，出發前再選', type: 'long',  addons: '', stock: null },
+  { id: 'L-EU-BU', name: '歐洲線商務艙 × 1人',     price: 28500, desc: '20個歐洲航點任選，出發前再選', type: 'long',  addons: '', stock: null },
+  { id: 'L-OT-EC', name: '非歐洲長線經濟艙 × 1人', price: 9900,  desc: '9個非歐洲航點任選，出發前再選', type: 'long', addons: '', stock: null },
+  { id: 'L-OT-BU', name: '非歐洲長線商務艙 × 1人', price: 25000, desc: '9個非歐洲航點任選，出發前再選', type: 'long', addons: '', stock: null },
 ];
 
 let currentAgent = null;
-let cart = []; // [{ plan, qty, note, _isHotel }]
+let cart = [];
+
+// ── 工具：只取日期部分 ──
+function dateOnly(str) {
+  if (!str) return '';
+  var s = String(str);
+  // 處理 ISO 格式 "2026-10-08T..." 或台灣格式 "2026/10/8 上午..." 或 "2026/10/8 星期..."
+  // 先取空白前的部分
+  var part = s.split('T')[0].split(' ')[0];
+  // 去掉斜線後面的星期（有些格式是 "2026/10/8星期四"）
+  part = part.replace(/[上下午星期一二三四五六日週]+.*$/, '');
+  return part.trim();
+}
 
 // ── 登入 ──
 function login() {
-  const id = document.getElementById('agentInput').value.trim().toUpperCase();
+  var id = document.getElementById('agentInput').value.trim().toUpperCase();
   if (AGENTS[id]) {
-    currentAgent = { id, name: AGENTS[id] };
+    currentAgent = { id: id, name: AGENTS[id] };
     localStorage.setItem('flt_agent', JSON.stringify(currentAgent));
     showMain();
   } else {
@@ -487,28 +507,33 @@ function showMain() {
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('mainPage').style.display = 'block';
   document.getElementById('cartFab').style.display = 'flex';
-  document.getElementById('agentLabel').textContent = `${currentAgent.id} · ${currentAgent.name}`;
+  document.getElementById('agentLabel').textContent = currentAgent.id + ' · ' + currentAgent.name;
   if (currentAgent.id === 'ADMIN') {
     document.getElementById('tab-admin').style.display = 'block';
   }
   loadAndRenderPlans();
 }
 
-// ── 方案 ──
+// ── 方案載入 ──
 async function loadAndRenderPlans() {
   try {
-    const res = await fetch(APPS_SCRIPT_URL + '?type=getPlans');
-    const data = await res.json();
+    var res = await fetch(APPS_SCRIPT_URL + '?type=getPlans');
+    var data = await res.json();
     if (data.plans && data.plans.length) {
-      const plans = data.plans.map(p => ({
-        id: p['方案編號'],
-        name: p['方案名稱'],
-        price: Number(p['單價']),
-        desc: p['說明'] || '',
-        addons: p['加購項目'] || '',
-        stock: p['庫存'] !== undefined ? Number(p['庫存']) : null,
-        type: p['方案編號'].startsWith('S') ? 'short' : p['方案編號'].startsWith('L') ? 'long' : 'promo'
-      }));
+      var plans = data.plans.map(function(p) {
+        var stockVal = p['庫存'];
+        var stock = (stockVal !== undefined && stockVal !== null && stockVal !== '') ? Number(stockVal) : null;
+        var id = String(p['方案編號'] || '');
+        return {
+          id: id,
+          name: String(p['方案名稱'] || ''),
+          price: Number(p['單價']) || 0,
+          desc: String(p['說明'] || ''),
+          addons: String(p['加購項目'] || ''),
+          stock: stock,
+          type: id.startsWith('S') ? 'short' : id.startsWith('L') ? 'long' : 'promo'
+        };
+      });
       renderPlans(plans);
     } else {
       renderPlans(DEFAULT_PLANS);
@@ -520,12 +545,12 @@ async function loadAndRenderPlans() {
 }
 
 function renderPlans(plans) {
-  const short = plans.filter(p => p.type === 'short');
-  const long = plans.filter(p => p.type === 'long');
-  const promo = plans.filter(p => p.type === 'promo');
+  var short = plans.filter(function(p) { return p.type === 'short'; });
+  var long  = plans.filter(function(p) { return p.type === 'long'; });
+  var promo = plans.filter(function(p) { return p.type === 'promo'; });
   document.getElementById('planGridShort').innerHTML = short.length ? short.map(planCard).join('') : '<div class="empty-state">目前無短線方案</div>';
-  document.getElementById('planGridLong').innerHTML = long.length ? long.map(planCard).join('') : '<div class="empty-state">目前無長線方案</div>';
-  const promoSection = document.getElementById('promoSection');
+  document.getElementById('planGridLong').innerHTML  = long.length  ? long.map(planCard).join('')  : '<div class="empty-state">目前無長線方案</div>';
+  var promoSection = document.getElementById('promoSection');
   if (promo.length) {
     promoSection.style.display = 'block';
     document.getElementById('planGridPromo').innerHTML = promo.map(planCard).join('');
@@ -536,59 +561,66 @@ function renderPlans(plans) {
 }
 
 function planCard(p) {
-  const addons = p.addons ? p.addons.split(';').filter(a => a.includes(':')).map(a => {
-    const [name, price] = a.split(':');
-    return { name: name.trim(), price: Number(price.trim()) };
-  }) : [];
+  var addons = [];
+  if (p.addons) {
+    p.addons.split(';').forEach(function(a) {
+      if (a.indexOf(':') !== -1) {
+        var parts = a.split(':');
+        addons.push({ name: parts[0].trim(), price: Number(parts[1].trim()) });
+      }
+    });
+  }
 
-  const addonHtml = addons.length ? `
-    <div class="plan-addons">
-      <div class="plan-addon-title">➕ 可加購</div>
-      ${addons.map(a => `
-        <div class="plan-addon-item">
-          <div class="plan-addon-name">${a.name}</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div class="plan-addon-price">$${a.price.toLocaleString()}</div>
-            <button class="add-addon-btn" onclick="addAddonToCart('${p.id}','${a.name}',${a.price})">加購</button>
-          </div>
-        </div>
-      `).join('')}
-    </div>` : '';
+  var addonHtml = '';
+  if (addons.length) {
+    addonHtml = '<div class="plan-addons"><div class="plan-addon-title">➕ 可加購</div>' +
+      addons.map(function(a) {
+        return '<div class="plan-addon-item">' +
+          '<div class="plan-addon-name">' + a.name + '</div>' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<div class="plan-addon-price">$' + a.price.toLocaleString() + '</div>' +
+          '<button class="add-addon-btn" onclick="addAddonToCart(\'' + p.id + '\',\'' + a.name + '\',' + a.price + ')">加購</button>' +
+          '</div></div>';
+      }).join('') + '</div>';
+  }
 
-  const stockHtml = p.stock !== null
-    ? `<div style="font-size:11px;color:${p.stock <= 3 ? '#c84030' : '#5a8a40'};font-weight:700;margin-top:2px;">剩餘 ${p.stock} 組</div>`
-    : '';
+  // 庫存顯示
+  var stockHtml = '';
+  if (p.stock !== null && p.stock !== undefined) {
+    var isLow = p.stock <= 3;
+    stockHtml = '<div class="plan-stock ' + (isLow ? 'low' : 'ok') + '">剩餘 ' + p.stock + ' 組</div>';
+  }
 
-  return `
-  <div class="plan-card">
-    <div class="plan-left">
-      <div class="plan-id">${p.id}</div>
-      <div class="plan-name">${p.name}</div>
-      <div class="plan-desc">${p.desc}</div>
-      ${stockHtml}
-    </div>
-    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-      <div class="plan-price">$${p.price.toLocaleString()}</div>
-      <button class="add-cart-btn" onclick="addToCart('${p.id}')">加入購物車</button>
-    </div>
-  </div>
-  ${addonHtml}`;
+  return '<div class="plan-card">' +
+    '<div class="plan-left">' +
+    '<div class="plan-id">' + p.id + '</div>' +
+    '<div class="plan-name">' + p.name + '</div>' +
+    '<div class="plan-desc">' + p.desc + '</div>' +
+    stockHtml +
+    '</div>' +
+    '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">' +
+    '<div class="plan-price">$' + p.price.toLocaleString() + '</div>' +
+    '<button class="add-cart-btn" onclick="addToCart(\'' + p.id + '\')">加入購物車</button>' +
+    '</div>' +
+    '</div>' + addonHtml;
 }
 
 // ── 飯店方案 ──
 async function loadHotelPlans() {
   document.getElementById('hotelPlanGrid').innerHTML = '<div class="empty-state">載入中...</div>';
   try {
-    const res = await fetch(APPS_SCRIPT_URL + '?type=getHotelPlans');
-    const data = await res.json();
+    var res = await fetch(APPS_SCRIPT_URL + '?type=getHotelPlans');
+    var data = await res.json();
     if (data.plans && data.plans.length) {
-      const plans = data.plans.map(p => ({
-        id:     p.id    || p['方案ID']   || '',
-        name:   p.name  || p['方案名稱'] || '',
-        price:  Number(p.price || p['每晚價格']) || 0,
-        desc:   p.desc  || p['說明']     || p['描述'] || '',
-        active: p.active !== false && p['啟用'] !== '停用' && p['狀態'] !== '下架',
-      })).filter(p => p.id && p.active);
+      var plans = data.plans.map(function(p) {
+        return {
+          id:     String(p.id || p['方案ID'] || ''),
+          name:   String(p.name || p['方案名稱'] || ''),
+          price:  Number(p.price || p['每晚價格']) || 0,
+          desc:   String(p.desc || p['說明'] || p['描述'] || ''),
+          active: p.active !== false && p['啟用'] !== '停用' && p['狀態'] !== '下架',
+        };
+      }).filter(function(p) { return p.id && p.active; });
       window._hotelPlans = plans;
       if (plans.length) {
         document.getElementById('hotelPlanGrid').innerHTML = plans.map(hotelPlanCard).join('');
@@ -604,76 +636,70 @@ async function loadHotelPlans() {
 }
 
 function hotelPlanCard(p) {
-  return `
-  <div class="hotel-plan-card">
-    <div class="plan-left">
-      <div class="hotel-plan-id">${p.id}</div>
-      <div class="hotel-plan-name">${p.name}</div>
-      <div class="hotel-plan-desc">${p.desc}</div>
-    </div>
-    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-      <div class="hotel-plan-price">$${p.price.toLocaleString()}<br><span class="hotel-plan-price-sub">/ 晚</span></div>
-      <button class="add-hotel-btn" onclick="addHotelToCart('${p.id}')">加入購物車</button>
-    </div>
-  </div>`;
+  return '<div class="hotel-plan-card">' +
+    '<div class="plan-left">' +
+    '<div class="hotel-plan-id">' + p.id + '</div>' +
+    '<div class="hotel-plan-name">' + p.name + '</div>' +
+    '<div class="hotel-plan-desc">' + p.desc + '</div>' +
+    '</div>' +
+    '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">' +
+    '<div class="hotel-plan-price">$' + p.price.toLocaleString() + '<br><span class="hotel-plan-price-sub">/ 晚</span></div>' +
+    '<button class="add-hotel-btn" onclick="addHotelToCart(\'' + p.id + '\')">加入購物車</button>' +
+    '</div>' +
+    '</div>';
 }
 
 // ── 購物車 ──
 function addAddonToCart(planId, addonName, addonPrice) {
-  const addonId = `${planId}-${addonName}`;
-  const existing = cart.find(c => c.plan.id === addonId);
+  var addonId = planId + '-' + addonName;
+  var existing = cart.find(function(c) { return c.plan.id === addonId; });
   if (existing) {
     existing.qty++;
   } else {
-    cart.push({
-      plan: { id: addonId, name: `${addonName}（${planId}加購）`, price: addonPrice },
-      qty: 1,
-      note: '',
-      _isHotel: false
-    });
+    cart.push({ plan: { id: addonId, name: addonName + '（' + planId + '加購）', price: addonPrice }, qty: 1, note: '', _isHotel: false });
   }
   updateCartBadge();
-  const btn = event.target;
+  var btn = event.target;
   btn.textContent = '✅';
-  setTimeout(() => { btn.textContent = '加購'; }, 1000);
+  setTimeout(function() { btn.textContent = '加購'; }, 1000);
 }
 window.addAddonToCart = addAddonToCart;
 
 function addToCart(planId) {
-  const plans = window._currentPlans || DEFAULT_PLANS;
-  const plan = plans.find(p => p.id === planId);
+  var plans = window._currentPlans || DEFAULT_PLANS;
+  var plan = plans.find(function(p) { return p.id === planId; });
   if (!plan) return;
-  const existing = cart.find(c => c.plan.id === planId && !c._isHotel);
+  var existing = cart.find(function(c) { return c.plan.id === planId && !c._isHotel; });
   if (existing) {
     existing.qty++;
   } else {
-    cart.push({ plan, qty: 1, note: '', _isHotel: false });
+    cart.push({ plan: plan, qty: 1, note: '', _isHotel: false });
   }
   updateCartBadge();
-  const btn = event.target;
+  var btn = event.target;
   btn.textContent = '✅ 已加入';
-  setTimeout(() => { btn.textContent = '加入購物車'; }, 1000);
+  setTimeout(function() { btn.textContent = '加入購物車'; }, 1000);
 }
 
 function addHotelToCart(planId) {
-  const plans = window._hotelPlans || [];
-  const plan = plans.find(p => p.id === planId);
+  var plans = window._hotelPlans || [];
+  var plan = plans.find(function(p) { return p.id === planId; });
   if (!plan) return;
-  const existing = cart.find(c => c.plan.id === planId && c._isHotel);
+  var existing = cart.find(function(c) { return c.plan.id === planId && c._isHotel; });
   if (existing) {
     existing.qty++;
   } else {
-    cart.push({ plan, qty: 1, note: '', _isHotel: true });
+    cart.push({ plan: plan, qty: 1, note: '', _isHotel: true });
   }
   updateCartBadge();
-  const btn = event.target;
+  var btn = event.target;
   btn.textContent = '✅ 已加入';
-  setTimeout(() => { btn.textContent = '加入購物車'; }, 1000);
+  setTimeout(function() { btn.textContent = '加入購物車'; }, 1000);
 }
 
 function updateCartBadge() {
-  const total = cart.reduce((s, c) => s + c.qty, 0);
-  const badge = document.getElementById('cartFabBadge');
+  var total = cart.reduce(function(s, c) { return s + c.qty; }, 0);
+  var badge = document.getElementById('cartFabBadge');
   if (total > 0) {
     badge.style.display = 'flex';
     badge.textContent = total;
@@ -694,38 +720,35 @@ function closeCart() {
 }
 
 function renderCart() {
-  const el = document.getElementById('cartItems');
+  var el = document.getElementById('cartItems');
   if (!cart.length) {
     el.innerHTML = '<div class="cart-empty">購物車是空的 🛒<br>請先選擇方案加入</div>';
     return;
   }
-  const hasHotel = cart.some(c => c._isHotel);
-  const total = cart.reduce((s, c) => s + c.plan.price * c.qty, 0);
-  const hotelNotice = hasHotel ? `<div class="cart-hotel-notice">🏨 飯店訂單說明：送出後狀態為「待補資料」，請在一週內至「我的訂單」補填入住資料（入住日期、房型、住客等）。</div>` : '';
-  el.innerHTML = hotelNotice + cart.map((c, i) => `
-    <div class="cart-item${c._isHotel ? ' hotel' : ''}">
-      <div class="cart-item-header">
-        <div>
-          <div class="cart-item-id${c._isHotel ? ' hotel' : ''}">${c._isHotel ? '🏨 ' : ''}${c.plan.id}</div>
-          <div class="cart-item-name">${c.plan.name}</div>
-        </div>
-        <button class="cart-remove" onclick="removeFromCart(${i})">🗑</button>
-      </div>
-      <div class="cart-item-controls">
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
-          <div class="qty-num">${c.qty}</div>
-          <button class="qty-btn" onclick="changeQty(${i}, 1)">＋</button>
-        </div>
-        <div class="cart-item-price${c._isHotel ? ' hotel' : ''}">$${(c.plan.price * c.qty).toLocaleString()}${c._isHotel ? '<span style="font-size:10px;font-weight:400;"> /晚</span>' : ''}</div>
-      </div>
-      <textarea class="cart-note-field" placeholder="${c._isHotel ? '備註（選填）' : '此項目備註（選填）'}" onchange="updateNote(${i}, this.value)">${c.note}</textarea>
-    </div>
-  `).join('') + `
-  <div class="cart-total-row">
-    <div class="cart-total-label">合計</div>
-    <div class="cart-total-amount">$${total.toLocaleString()}</div>
-  </div>`;
+  var hasHotel = cart.some(function(c) { return c._isHotel; });
+  var total = cart.reduce(function(s, c) { return s + c.plan.price * c.qty; }, 0);
+  var hotelNotice = hasHotel ? '<div class="cart-hotel-notice">🏨 飯店訂單說明：送出後狀態為「待補資料」，請在一週內至「我的訂單」補填入住資料（入住日期、房型、住客等）。</div>' : '';
+  el.innerHTML = hotelNotice + cart.map(function(c, i) {
+    return '<div class="cart-item' + (c._isHotel ? ' hotel' : '') + '">' +
+      '<div class="cart-item-header">' +
+      '<div>' +
+      '<div class="cart-item-id' + (c._isHotel ? ' hotel' : '') + '">' + (c._isHotel ? '🏨 ' : '') + c.plan.id + '</div>' +
+      '<div class="cart-item-name">' + c.plan.name + '</div>' +
+      '</div>' +
+      '<button class="cart-remove" onclick="removeFromCart(' + i + ')">🗑</button>' +
+      '</div>' +
+      '<div class="cart-item-controls">' +
+      '<div class="qty-controls">' +
+      '<button class="qty-btn" onclick="changeQty(' + i + ', -1)">−</button>' +
+      '<div class="qty-num">' + c.qty + '</div>' +
+      '<button class="qty-btn" onclick="changeQty(' + i + ', 1)">＋</button>' +
+      '</div>' +
+      '<div class="cart-item-price' + (c._isHotel ? ' hotel' : '') + '">$' + (c.plan.price * c.qty).toLocaleString() + (c._isHotel ? '<span style="font-size:10px;font-weight:400;"> /晚</span>' : '') + '</div>' +
+      '</div>' +
+      '<textarea class="cart-note-field" placeholder="' + (c._isHotel ? '備註（選填）' : '此項目備註（選填）') + '" onchange="updateNote(' + i + ', this.value)">' + c.note + '</textarea>' +
+      '</div>';
+  }).join('') +
+  '<div class="cart-total-row"><div class="cart-total-label">合計</div><div class="cart-total-amount">$' + total.toLocaleString() + '</div></div>';
 }
 
 function removeFromCart(i) {
@@ -750,64 +773,57 @@ async function checkout() {
   closeCart();
   showLoading('送出訂單中...');
 
-  const clientName = document.getElementById('clientName').value.trim();
-  const remarks = document.getElementById('orderRemarks').value.trim();
-  const total = cart.reduce((s, c) => s + c.plan.price * c.qty, 0);
-  const timestamp = new Date().toISOString();
+  var clientName = document.getElementById('clientName').value.trim();
+  var remarks = document.getElementById('orderRemarks').value.trim();
+  var total = cart.reduce(function(s, c) { return s + c.plan.price * c.qty; }, 0);
+  var timestamp = new Date().toISOString();
 
-  const flightItems = cart.filter(c => !c._isHotel);
-  const hotelItems = cart.filter(c => c._isHotel);
+  var flightItems = cart.filter(function(c) { return !c._isHotel; });
+  var hotelItems = cart.filter(function(c) { return c._isHotel; });
 
-  // 一般機票訂單
-  for (const item of flightItems) {
-    const order = {
-      type: 'order',
-      timestamp,
-      agentId: currentAgent.id,
-      agentName: currentAgent.name,
-      planId: item.plan.id,
-      planName: item.plan.name,
-      quantity: item.qty,
-      total: item.plan.price * item.qty,
-      clientName,
-      remarks: item.note || remarks,
-    };
+  for (var i = 0; i < flightItems.length; i++) {
+    var item = flightItems[i];
     await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(order)
+      body: JSON.stringify({
+        type: 'order', timestamp: timestamp,
+        agentId: currentAgent.id, agentName: currentAgent.name,
+        planId: item.plan.id, planName: item.plan.name,
+        quantity: item.qty, total: item.plan.price * item.qty,
+        clientName: clientName, remarks: item.note || remarks,
+      })
     });
   }
 
-  // 飯店訂單（每晚 × 晚數）
-  for (const item of hotelItems) {
-    const order = {
-      type: 'hotelOrder',
-      timestamp,
-      agentId: currentAgent.id,
-      agentName: currentAgent.name,
-      planId: item.plan.id,
-      planName: item.plan.name,
-      nights: item.qty,
-      pricePerNight: item.plan.price,
-      total: item.plan.price * item.qty,
-      clientName,
-      remarks: item.note || remarks,
-    };
+  for (var j = 0; j < hotelItems.length; j++) {
+    var hitem = hotelItems[j];
     await fetch(HOTEL_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(order)
+      body: JSON.stringify({
+        type: 'hotelOrder', timestamp: timestamp,
+        agentId: currentAgent.id, agentName: currentAgent.name,
+        planId: hitem.plan.id, planName: hitem.plan.name,
+        nights: hitem.qty, pricePerNight: hitem.plan.price,
+        total: hitem.plan.price * hitem.qty,
+        clientName: clientName, remarks: hitem.note || remarks,
+      })
     });
   }
 
-  // LINE 通知
-  const flightLines = flightItems.map(c => `  ✈️ ${c.plan.id} ${c.plan.name} × ${c.qty} 組 = $${(c.plan.price * c.qty).toLocaleString()}${c.note ? ` (${c.note})` : ''}`).join('\n');
-  const hotelLines = hotelItems.map(c => `  🏨 ${c.plan.name} × ${c.qty} 晚 = $${(c.plan.price * c.qty).toLocaleString()}${c.note ? ` (${c.note})` : ''}`).join('\n');
-  const allLines = [flightLines, hotelLines].filter(Boolean).join('\n');
-  const msg = `📦 新訂單通知\n━━━━━━━━━━━━━\n🧑‍💼 業務：${currentAgent.id}\n\n${allLines}\n\n💰 訂單總金額：$${total.toLocaleString()}${clientName ? `\n👤 客戶：${clientName}` : ''}${remarks ? `\n📝 備註：${remarks}` : ''}${hotelItems.length ? '\n\n⚠️ 飯店訂單待補入住資料' : ''}`;
+  var flightLines = flightItems.map(function(c) {
+    return '  ✈️ ' + c.plan.id + ' ' + c.plan.name + ' × ' + c.qty + ' 組 = $' + (c.plan.price * c.qty).toLocaleString() + (c.note ? ' (' + c.note + ')' : '');
+  }).join('\n');
+  var hotelLines = hotelItems.map(function(c) {
+    return '  🏨 ' + c.plan.name + ' × ' + c.qty + ' 晚 = $' + (c.plan.price * c.qty).toLocaleString() + (c.note ? ' (' + c.note + ')' : '');
+  }).join('\n');
+  var allLines = [flightLines, hotelLines].filter(Boolean).join('\n');
+  var msg = '📦 新訂單通知\n━━━━━━━━━━━━━\n🧑‍💼 業務：' + currentAgent.id + '\n\n' + allLines +
+    '\n\n💰 訂單總金額：$' + total.toLocaleString() +
+    (clientName ? '\n👤 客戶：' + clientName : '') +
+    (remarks ? '\n📝 備註：' + remarks : '') +
+    (hotelItems.length ? '\n\n⚠️ 飯店訂單待補入住資料' : '');
 
   await fetch(NOTIFY_URL, {
     method: 'POST',
@@ -816,8 +832,8 @@ async function checkout() {
   });
 
   hideLoading();
-  const hotelMsg = hotelItems.length ? '\n\n🏨 飯店訂單已送出，請至「我的訂單」補填入住資料' : '';
-  alert(`✅ 訂單送出成功！\n\n總金額：$${total.toLocaleString()}${hotelMsg}`);
+  var hotelMsg = hotelItems.length ? '\n\n🏨 飯店訂單已送出，請至「我的訂單」補填入住資料' : '';
+  alert('✅ 訂單送出成功！\n\n總金額：$' + total.toLocaleString() + hotelMsg);
 
   cart = [];
   document.getElementById('clientName').value = '';
@@ -825,27 +841,24 @@ async function checkout() {
   updateCartBadge();
 }
 
-// ── 訂單紀錄 ──
+// ── 我的訂單 ──
 async function loadOrders() {
   document.getElementById('orderList').innerHTML = '<div class="empty-state">載入中...</div>';
   try {
-    // 機票訂單
-    const res = await fetch(APPS_SCRIPT_URL + `?type=getOrders&agentId=${currentAgent.id}`);
-    const data = await res.json();
-    const flightOrders = (data.orders || []).map(o => ({ ...o, _type: 'flight' }));
+    var res = await fetch(APPS_SCRIPT_URL + '?type=getOrders&agentId=' + currentAgent.id);
+    var data = await res.json();
+    var flightOrders = (data.orders || []).map(function(o) { return Object.assign({}, o, { _type: 'flight' }); });
 
-    // 飯店訂單
-    let hotelOrders = [];
+    var hotelOrders = [];
     try {
-      const hRes = await fetch(HOTEL_SCRIPT_URL + `?type=getHotelOrders&agentId=${currentAgent.id}`);
-      const hData = await hRes.json();
-      hotelOrders = (hData.orders || []).map(o => ({ ...o, _type: 'hotel' }));
-    } catch(e) { /* 飯店訂單載入失敗不影響機票訂單 */ }
+      var hRes = await fetch(HOTEL_SCRIPT_URL + '?type=getHotelOrders&agentId=' + currentAgent.id);
+      var hData = await hRes.json();
+      hotelOrders = (hData.orders || []).map(function(o) { return Object.assign({}, o, { _type: 'hotel' }); });
+    } catch(e) {}
 
-    // 合併並依時間排序（新→舊）
-    const allOrders = [...flightOrders, ...hotelOrders].sort((a, b) => {
-      const ta = a['時間'] || a.timestamp || '';
-      const tb = b['時間'] || b.timestamp || '';
+    var allOrders = flightOrders.concat(hotelOrders).sort(function(a, b) {
+      var ta = a['時間'] || a.timestamp || '';
+      var tb = b['時間'] || b.timestamp || '';
       return tb.localeCompare(ta);
     });
 
@@ -854,43 +867,37 @@ async function loadOrders() {
       return;
     }
 
-    document.getElementById('orderList').innerHTML = allOrders.map(o => {
+    document.getElementById('orderList').innerHTML = allOrders.map(function(o) {
       if (o._type === 'hotel') {
-        const status = o.status || '待補資料';
-        const statusClass = status === '資料已填' ? 'status-hotel-filled' : 'status-hotel-waiting';
-        const fillBtn = status !== '資料已填' ? `<button class="fill-data-btn" onclick="openFillModal(${o.row}, '${escHtml(o.planName || '')}')">✏️ 補填資料</button>` : '';
-        return `
-          <div class="order-item hotel">
-            <div class="order-header">
-              <div>
-                <div class="order-no">🏨 ${(o.timestamp || '').split(' ')[0]}</div>
-                <div class="order-plans">${escHtml(o.planName || '')}</div>
-              </div>
-              <div class="order-status ${statusClass}">${status}</div>
-            </div>
-            <div class="order-detail">
-              🌙 ${o.nights || 0}晚${o.clientName ? ` · 👤 ${escHtml(o.clientName)}` : ''}${o.remarks ? ` · 📝 ${escHtml(o.remarks)}` : ''}
-              ${o.checkIn ? `<br>📅 入住：${o.checkIn} ～ ${o.checkOut}` : ''}
-              ${o.guestName ? `<br>🧑 住客：${escHtml(o.guestName)} ${o.guestPhone || ''}` : ''}
-            </div>
-            <div class="order-total hotel">$${Number(o.total || 0).toLocaleString()}</div>
-            ${fillBtn}
-          </div>`;
+        var status = o.status || '待補資料';
+        var statusClass = status === '資料已填' ? 'status-hotel-filled' : 'status-hotel-waiting';
+        var fillBtn = status !== '資料已填' ? '<button class="fill-data-btn" onclick="openFillModal(' + o.row + ', \'' + escHtml(o.planName || '') + '\')">✏️ 補填資料</button>' : '';
+        return '<div class="order-item hotel">' +
+          '<div class="order-header"><div>' +
+          '<div class="order-date">🏨 ' + dateOnly(o.timestamp) + '</div>' +
+          '<div class="order-plans">' + escHtml(o.planName || '') + '</div>' +
+          '</div><div class="order-status ' + statusClass + '">' + status + '</div></div>' +
+          '<div class="order-detail">🌙 ' + (o.nights || 0) + '晚' +
+          (o.clientName ? ' · 👤 ' + escHtml(o.clientName) : '') +
+          (o.remarks ? ' · 📝 ' + escHtml(o.remarks) : '') +
+          (o.checkIn ? '<br>📅 入住：' + o.checkIn + ' ～ ' + o.checkOut : '') +
+          (o.guestName ? '<br>🧑 住客：' + escHtml(o.guestName) + ' ' + (o.guestPhone || '') : '') +
+          '</div>' +
+          '<div class="order-total hotel">$' + Number(o.total || 0).toLocaleString() + '</div>' +
+          fillBtn + '</div>';
       } else {
-        return `
-          <div class="order-item">
-            <div class="order-header">
-              <div>
-                <div class="order-no">${(o['時間'] || '').split(' ')[0]}</div>
-                <div class="order-plans">${o['方案名稱'] || ''}</div>
-              </div>
-              <div class="order-status status-${o['狀態'] === '已確認' ? 'confirmed' : 'pending'}">${o['狀態'] || '待確認'}</div>
-            </div>
-            <div class="order-detail">
-              🔢 ${o['組數'] || ''}組${o['客戶姓名'] ? ` · 👤 ${o['客戶姓名']}` : ''}${o['備註'] ? ` · 📝 ${o['備註']}` : ''}
-            </div>
-            <div class="order-total">$${Number(o['總金額'] || 0).toLocaleString()}</div>
-          </div>`;
+        var st = o['狀態'] || '待確認';
+        return '<div class="order-item">' +
+          '<div class="order-header"><div>' +
+          '<div class="order-date">' + dateOnly(o['時間']) + '</div>' +
+          '<div class="order-plans">' + (o['方案名稱'] || '') + '</div>' +
+          '</div><div class="order-status status-' + (st === '已確認' ? 'confirmed' : 'pending') + '">' + st + '</div></div>' +
+          '<div class="order-detail">🔢 ' + (o['組數'] || '') + '組' +
+          (o['客戶姓名'] ? ' · 👤 ' + o['客戶姓名'] : '') +
+          (o['備註'] ? ' · 📝 ' + o['備註'] : '') +
+          '</div>' +
+          '<div class="order-total">$' + Number(o['總金額'] || 0).toLocaleString() + '</div>' +
+          '</div>';
       }
     }).join('');
   } catch(e) {
@@ -921,14 +928,14 @@ function closeFillModal() {
 }
 
 async function submitFillData() {
-  const row = Number(document.getElementById('fillRow').value);
-  const checkIn = document.getElementById('fillCheckIn').value;
-  const checkOut = document.getElementById('fillCheckOut').value;
-  const roomType = document.getElementById('fillRoomType').value.trim();
-  const adults = Number(document.getElementById('fillAdults').value) || 0;
-  const children = Number(document.getElementById('fillChildren').value) || 0;
-  const guestName = document.getElementById('fillGuestName').value.trim();
-  const guestPhone = document.getElementById('fillGuestPhone').value.trim();
+  var row = Number(document.getElementById('fillRow').value);
+  var checkIn = document.getElementById('fillCheckIn').value;
+  var checkOut = document.getElementById('fillCheckOut').value;
+  var roomType = document.getElementById('fillRoomType').value.trim();
+  var adults = Number(document.getElementById('fillAdults').value) || 0;
+  var children = Number(document.getElementById('fillChildren').value) || 0;
+  var guestName = document.getElementById('fillGuestName').value.trim();
+  var guestPhone = document.getElementById('fillGuestPhone').value.trim();
 
   if (!checkIn || !checkOut) { alert('請填寫入住日期和退房日期'); return; }
   if (!guestName) { alert('請填寫住客姓名'); return; }
@@ -938,13 +945,9 @@ async function submitFillData() {
 
   try {
     await fetch(HOTEL_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'fillHotelData',
-        row, checkIn, checkOut, roomType, adults, children, guestName, guestPhone
-      })
+      body: JSON.stringify({ type: 'fillHotelData', row: row, checkIn: checkIn, checkOut: checkOut, roomType: roomType, adults: adults, children: children, guestName: guestName, guestPhone: guestPhone })
     });
     hideLoading();
     alert('✅ 資料補填成功！');
@@ -973,63 +976,61 @@ function switchTab(tab) {
 // ── 管理員：所有訂單 ──
 async function loadAllOrders() {
   document.getElementById('allOrderList').innerHTML = '<div class="empty-state">載入中...</div>';
-  const agentFilter = document.getElementById('filterAgent').value;
-  const statusFilter = document.getElementById('filterStatus').value;
+  var agentFilter = document.getElementById('filterAgent').value;
+  var statusFilter = document.getElementById('filterStatus').value;
   try {
-    const res = await fetch(APPS_SCRIPT_URL + `?type=getAllOrders`);
-    const data = await res.json();
-    let orders = (data.orders || []).reverse();
-    if (agentFilter) orders = orders.filter(o => o['業務編號'] === agentFilter);
-    if (statusFilter) orders = orders.filter(o => (o['狀態'] || '待確認') === statusFilter);
+    var res = await fetch(APPS_SCRIPT_URL + '?type=getAllOrders');
+    var data = await res.json();
+    var orders = (data.orders || []).reverse();
+    if (agentFilter) orders = orders.filter(function(o) { return o['業務編號'] === agentFilter; });
+    if (statusFilter) orders = orders.filter(function(o) { return (o['狀態'] || '待確認') === statusFilter; });
     if (!orders.length) {
       document.getElementById('allOrderList').innerHTML = '<div class="empty-state">沒有訂單紀錄</div>';
       return;
     }
 
-    const groups = {};
-    orders.forEach(o => {
-      const timeStr = o['時間'] ? String(o['時間']) : '';
-      const dateOnly = timeStr.split('T')[0] || timeStr.split(' ')[0] || '未知日期';
-      const dateStr = dateOnly.replace(/-/g, '/');
-      if (!groups[dateStr]) groups[dateStr] = [];
-      groups[dateStr].push(o);
+    // 依日期分組
+    var groups = {};
+    orders.forEach(function(o) {
+      var d = dateOnly(o['時間']) || '未知日期';
+      if (!groups[d]) groups[d] = [];
+      groups[d].push(o);
     });
 
-    const makeId = (date) => date.replace(/[\\/:\s]/g, '_');
+    function makeId(date) { return date.replace(/[\/\-:\s]/g, '_'); }
 
-    document.getElementById('allOrderList').innerHTML = Object.entries(groups).map(([date, items]) => {
-      const id = makeId(date);
-      return `
-      <div class="order-group">
-        <div class="order-group-header" onclick="toggleGroup('${id}')">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span class="group-arrow" id="arrow-${id}">▼</span>
-            <strong>${date}</strong>
-            <span style="font-size:11px;color:var(--subtext);">${items.length} 筆</span>
-          </div>
-          <div style="font-size:13px;font-weight:800;color:var(--brown);">$${items.reduce((s,o) => s + Number(o['總金額']||0), 0).toLocaleString()}</div>
-        </div>
-        <div class="order-group-body" id="group-${id}">
-          ${items.map(o => `
-            <div class="admin-order-item">
-              <div class="admin-order-header">
-                <div>
-                  <div class="admin-order-agent">業務：${o['業務編號'] || ''}</div>
-                  <div class="admin-order-plan">${o['方案名稱'] || ''}</div>
-                </div>
-                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-                  <div class="order-status status-${o['狀態'] === '已確認' ? 'confirmed' : 'pending'}">${o['狀態'] || '待確認'}</div>
-                  ${o['狀態'] !== '已確認' ? `<button class="confirm-btn" onclick="confirmOrder(${o['_row']})">✅ 確認</button>` : ''}
-                </div>
-              </div>
-              <div class="admin-order-detail">
-                🔢 ${o['組數']||''}組${o['客戶姓名'] ? ` · 👤 ${o['客戶姓名']}` : ''}${o['備註'] ? ` · 📝 ${o['備註']}` : ''}
-              </div>
-              <div class="admin-order-total">$${Number(o['總金額']||0).toLocaleString()}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>`;
+    document.getElementById('allOrderList').innerHTML = Object.entries(groups).map(function(entry) {
+      var date = entry[0];
+      var items = entry[1];
+      var id = makeId(date);
+      return '<div class="order-group">' +
+        '<div class="order-group-header" onclick="toggleGroup(\'' + id + '\')">' +
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+        '<span class="group-arrow" id="arrow-' + id + '">▼</span>' +
+        '<strong>' + date + '</strong>' +
+        '<span style="font-size:11px;color:var(--subtext);">' + items.length + ' 筆</span>' +
+        '</div>' +
+        '<div style="font-size:13px;font-weight:800;color:var(--brown);">$' + items.reduce(function(s, o) { return s + Number(o['總金額'] || 0); }, 0).toLocaleString() + '</div>' +
+        '</div>' +
+        '<div class="order-group-body" id="group-' + id + '">' +
+        items.map(function(o) {
+          return '<div class="admin-order-item">' +
+            '<div class="admin-order-header"><div>' +
+            '<div class="admin-order-agent">業務：' + (o['業務編號'] || '') + '</div>' +
+            '<div class="admin-order-plan">' + (o['方案名稱'] || '') + '</div>' +
+            '</div>' +
+            '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">' +
+            '<div class="order-status status-' + (o['狀態'] === '已確認' ? 'confirmed' : 'pending') + '">' + (o['狀態'] || '待確認') + '</div>' +
+            (o['狀態'] !== '已確認' ? '<button class="confirm-btn" onclick="confirmOrder(' + o['_row'] + ')">✅ 確認</button>' : '') +
+            '</div></div>' +
+            '<div class="admin-order-detail">🔢 ' + (o['組數'] || '') + '組' +
+            (o['客戶姓名'] ? ' · 👤 ' + o['客戶姓名'] : '') +
+            (o['備註'] ? ' · 📝 ' + o['備註'] : '') +
+            '</div>' +
+            '<div class="admin-order-total">$' + Number(o['總金額'] || 0).toLocaleString() + '</div>' +
+            '</div>';
+        }).join('') +
+        '</div></div>';
     }).join('');
   } catch(e) {
     document.getElementById('allOrderList').innerHTML = '<div class="empty-state">載入失敗</div>';
@@ -1037,8 +1038,8 @@ async function loadAllOrders() {
 }
 
 window.toggleGroup = function(id) {
-  const body = document.getElementById(`group-${id}`);
-  const arrow = document.getElementById(`arrow-${id}`);
+  var body = document.getElementById('group-' + id);
+  var arrow = document.getElementById('arrow-' + id);
   if (body.style.display === 'none') {
     body.style.display = 'block';
     arrow.textContent = '▼';
@@ -1046,17 +1047,16 @@ window.toggleGroup = function(id) {
     body.style.display = 'none';
     arrow.textContent = '▶';
   }
-}
+};
 
 // ── 確認訂單 ──
 async function confirmOrder(row) {
   showLoading('確認訂單中...');
   try {
     await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'confirmOrder', row })
+      body: JSON.stringify({ type: 'confirmOrder', row: row })
     });
     hideLoading();
     loadAllOrders();
@@ -1070,20 +1070,20 @@ async function confirmOrder(row) {
 async function loadAdminPlans() {
   document.getElementById('adminPlanList').innerHTML = '<div class="empty-state">載入中...</div>';
   try {
-    const res = await fetch(APPS_SCRIPT_URL + '?type=getAllPlans');
-    const data = await res.json();
-    const plans = data.plans || [];
+    var res = await fetch(APPS_SCRIPT_URL + '?type=getAllPlans');
+    var data = await res.json();
+    var plans = data.plans || [];
     if (!plans.length) { document.getElementById('adminPlanList').innerHTML = '<div class="empty-state">沒有方案</div>'; return; }
-    document.getElementById('adminPlanList').innerHTML = plans.map(p => `
-      <div class="plan-manage-item">
-        <div class="plan-manage-left">
-          <div class="plan-manage-id">${p['方案編號']}</div>
-          <div class="plan-manage-name">${p['方案名稱']}</div>
-        </div>
-        <div class="plan-manage-price">$${Number(p['單價']).toLocaleString()}</div>
-        <button class="delist-btn" onclick="togglePlan('${p['方案編號']}', '${p['狀態']}')">${p['狀態'] === '上架' ? '下架' : '上架'}</button>
-      </div>
-    `).join('');
+    document.getElementById('adminPlanList').innerHTML = plans.map(function(p) {
+      return '<div class="plan-manage-item">' +
+        '<div class="plan-manage-left">' +
+        '<div class="plan-manage-id">' + p['方案編號'] + '</div>' +
+        '<div class="plan-manage-name">' + p['方案名稱'] + '</div>' +
+        '</div>' +
+        '<div class="plan-manage-price">$' + Number(p['單價']).toLocaleString() + '</div>' +
+        '<button class="delist-btn" onclick="togglePlan(\'' + p['方案編號'] + '\', \'' + p['狀態'] + '\')">' + (p['狀態'] === '上架' ? '下架' : '上架') + '</button>' +
+        '</div>';
+    }).join('');
   } catch(e) {
     document.getElementById('adminPlanList').innerHTML = '<div class="empty-state">載入失敗</div>';
   }
@@ -1093,24 +1093,23 @@ async function loadAdminPlans() {
 async function loadAdminHotelPlans() {
   document.getElementById('adminHotelPlanList').innerHTML = '<div class="empty-state">載入中...</div>';
   try {
-    const res = await fetch(APPS_SCRIPT_URL + '?type=getHotelPlans');
-    const data = await res.json();
-    const plans = data.plans || [];
+    var res = await fetch(APPS_SCRIPT_URL + '?type=getHotelPlans');
+    var data = await res.json();
+    var plans = data.plans || [];
     if (!plans.length) { document.getElementById('adminHotelPlanList').innerHTML = '<div class="empty-state">沒有飯店方案</div>'; return; }
-    document.getElementById('adminHotelPlanList').innerHTML = plans.map(p => {
-      const id = p.id || p['方案ID'] || '';
-      const name = p.name || p['方案名稱'] || '';
-      const price = Number(p.price || p['每晚價格']) || 0;
-      const active = p.active !== false && p['啟用'] !== '停用' && p['狀態'] !== '下架';
-      return `
-        <div class="plan-manage-item">
-          <div class="plan-manage-left">
-            <div class="plan-manage-id" style="color:var(--hotel);">${id}</div>
-            <div class="plan-manage-name">${name}</div>
-          </div>
-          <div class="plan-manage-price" style="color:var(--hotel);">$${price.toLocaleString()}/晚</div>
-          <button class="hotel-delist-btn" onclick="toggleHotelPlan('${id}')">${active ? '下架' : '上架'}</button>
-        </div>`;
+    document.getElementById('adminHotelPlanList').innerHTML = plans.map(function(p) {
+      var id = p.id || p['方案ID'] || '';
+      var name = p.name || p['方案名稱'] || '';
+      var price = Number(p.price || p['每晚價格']) || 0;
+      var active = p.active !== false && p['啟用'] !== '停用' && p['狀態'] !== '下架';
+      return '<div class="plan-manage-item">' +
+        '<div class="plan-manage-left">' +
+        '<div class="plan-manage-id" style="color:var(--hotel);">' + id + '</div>' +
+        '<div class="plan-manage-name">' + name + '</div>' +
+        '</div>' +
+        '<div class="plan-manage-price" style="color:var(--hotel);">$' + price.toLocaleString() + '/晚</div>' +
+        '<button class="hotel-delist-btn" onclick="toggleHotelPlan(\'' + id + '\')">' + (active ? '下架' : '上架') + '</button>' +
+        '</div>';
     }).join('');
   } catch(e) {
     document.getElementById('adminHotelPlanList').innerHTML = '<div class="empty-state">載入失敗</div>';
@@ -1119,18 +1118,17 @@ async function loadAdminHotelPlans() {
 
 // ── 新增方案 ──
 async function addNewPlan() {
-  const id = document.getElementById('newPlanId').value.trim();
-  const name = document.getElementById('newPlanName').value.trim();
-  const price = document.getElementById('newPlanPrice').value.trim();
-  const desc = document.getElementById('newPlanDesc').value.trim();
+  var id = document.getElementById('newPlanId').value.trim();
+  var name = document.getElementById('newPlanName').value.trim();
+  var price = document.getElementById('newPlanPrice').value.trim();
+  var desc = document.getElementById('newPlanDesc').value.trim();
   if (!id || !name || !price) { alert('請填寫方案編號、名稱和單價！'); return; }
   showLoading('新增方案中...');
   try {
     await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'addPlan', id, name, price: Number(price), desc })
+      body: JSON.stringify({ type: 'addPlan', id: id, name: name, price: Number(price), desc: desc })
     });
     hideLoading();
     document.getElementById('newPlanId').value = '';
@@ -1148,17 +1146,16 @@ async function addNewPlan() {
 
 // ── 新增飯店方案 ──
 async function addNewHotelPlan() {
-  const name = document.getElementById('newHotelName').value.trim();
-  const price = document.getElementById('newHotelPrice').value.trim();
-  const desc = document.getElementById('newHotelDesc').value.trim();
+  var name = document.getElementById('newHotelName').value.trim();
+  var price = document.getElementById('newHotelPrice').value.trim();
+  var desc = document.getElementById('newHotelDesc').value.trim();
   if (!name || !price) { alert('請填寫方案名稱和每晚價格！'); return; }
   showLoading('新增飯店方案中...');
   try {
     await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'addHotelPlan', name, price: Number(price), desc })
+      body: JSON.stringify({ type: 'addHotelPlan', name: name, price: Number(price), desc: desc })
     });
     hideLoading();
     document.getElementById('newHotelName').value = '';
@@ -1174,14 +1171,13 @@ async function addNewHotelPlan() {
 
 // ── 上架/下架方案 ──
 async function togglePlan(planId, currentStatus) {
-  const newStatus = currentStatus === '上架' ? '下架' : '上架';
+  var newStatus = currentStatus === '上架' ? '下架' : '上架';
   showLoading('更新中...');
   try {
     await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'togglePlan', planId, status: newStatus })
+      body: JSON.stringify({ type: 'togglePlan', planId: planId, status: newStatus })
     });
     hideLoading();
     loadAdminPlans();
@@ -1197,10 +1193,9 @@ async function toggleHotelPlan(planId) {
   showLoading('更新中...');
   try {
     await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'toggleHotelPlan', planId })
+      body: JSON.stringify({ type: 'toggleHotelPlan', planId: planId })
     });
     hideLoading();
     loadAdminHotelPlans();
@@ -1210,13 +1205,18 @@ async function toggleHotelPlan(planId) {
   }
 }
 
-function showLoading(text) { document.getElementById('loadingText').textContent = text; document.getElementById('loadingOverlay').classList.add('show'); }
-function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
+function showLoading(text) {
+  document.getElementById('loadingText').textContent = text;
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('show');
+}
 
 // ── 初始化 ──
-const saved = localStorage.getItem('flt_agent');
+var saved = localStorage.getItem('flt_agent');
 if (saved) { currentAgent = JSON.parse(saved); showMain(); }
-document.getElementById('agentInput').addEventListener('keypress', e => { if (e.key === 'Enter') login(); });
+document.getElementById('agentInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') login(); });
 </script>
 </body>
 </html>
