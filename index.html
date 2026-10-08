@@ -474,13 +474,30 @@ let cart = [];
 // ── 工具：只取日期部分 ──
 function dateOnly(str) {
   if (!str) return '';
-  var s = String(str);
-  // 處理 ISO 格式 "2026-10-08T..." 或台灣格式 "2026/10/8 上午..." 或 "2026/10/8 星期..."
-  // 先取空白前的部分
-  var part = s.split('T')[0].split(' ')[0];
-  // 去掉斜線後面的星期（有些格式是 "2026/10/8星期四"）
-  part = part.replace(/[上下午星期一二三四五六日週]+.*$/, '');
-  return part.trim();
+  var s = String(str).trim();
+  if (s === '' || s === 'undefined' || s === 'null') return '';
+
+  // 1) ISO 格式 "2026-10-08T10:22:33" → 取 T 前
+  if (s.indexOf('T') > 0) {
+    return s.split('T')[0];
+  }
+
+  // 2) 台灣格式 "2026/10/8 上午10:22:33" 或 "2026/10/8 星期四"
+  //    → 取第一個空白前，再清掉中文
+  var m = s.match(/^(\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2})/);
+  if (m) return m[1];
+
+  // 3) JS Date.toString() 格式 "Wed Oct 07 2026 23:33:11 GMT+0800"
+  //    → 解析後重組成 YYYY/M/D
+  try {
+    var d = new Date(s);
+    if (!isNaN(d.getTime())) {
+      return d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate();
+    }
+  } catch(e) {}
+
+  // 4) fallback：取空白前第一段
+  return s.split(' ')[0];
 }
 
 // ── 登入 ──
@@ -524,6 +541,7 @@ async function loadAndRenderPlans() {
     if (data.plans && data.plans.length) {
       var plans = data.plans.map(function(p) {
         var stockVal = p['庫存'];
+        console.log('[方案庫存]', p['方案名稱'], '庫存原值:', stockVal, '型別:', typeof stockVal);
         var stock = (stockVal !== undefined && stockVal !== null && stockVal !== '') ? Number(stockVal) : null;
         var id = String(p['方案編號'] || '');
         return {
