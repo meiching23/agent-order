@@ -624,14 +624,15 @@ async function loadHotelPlans() {
     var data = await res.json();
     if (data.plans && data.plans.length) {
       var plans = data.plans.map(function(p) {
+        var name = String(p.name || p['方案名稱'] || '');
         return {
-          id:     String(p.id || p['方案ID'] || ''),
-          name:   String(p.name || p['方案名稱'] || ''),
+          id:     name,
+          name:   name,
           price:  Number(p.price || p['每晚價格']) || 0,
           desc:   String(p.desc || p['說明'] || p['描述'] || ''),
           active: p.active !== false && p['啟用'] !== '停用' && p['狀態'] !== '下架',
         };
-      }).filter(function(p) { return p.id && p.active; });
+      }).filter(function(p) { return p.name && p.active; });
       window._hotelPlans = plans;
       if (plans.length) {
         document.getElementById('hotelPlanGrid').innerHTML = plans.map(hotelPlanCard).join('');
@@ -1109,17 +1110,15 @@ async function loadAdminHotelPlans() {
     var plans = data.plans || [];
     if (!plans.length) { document.getElementById('adminHotelPlanList').innerHTML = '<div class="empty-state">沒有飯店方案</div>'; return; }
     document.getElementById('adminHotelPlanList').innerHTML = plans.map(function(p) {
-      var id = p.id || p['方案ID'] || '';
       var name = p.name || p['方案名稱'] || '';
       var price = Number(p.price || p['每晚價格']) || 0;
       var active = p.active !== false && p['啟用'] !== '停用' && p['狀態'] !== '下架';
       return '<div class="plan-manage-item">' +
         '<div class="plan-manage-left">' +
-        '<div class="plan-manage-id" style="color:var(--hotel);">' + id + '</div>' +
         '<div class="plan-manage-name">' + name + '</div>' +
         '</div>' +
         '<div class="plan-manage-price" style="color:var(--hotel);">$' + price.toLocaleString() + '/晚</div>' +
-        '<button class="hotel-delist-btn" onclick="toggleHotelPlan(\'' + id + '\')">' + (active ? '下架' : '上架') + '</button>' +
+        '<button class="hotel-delist-btn" onclick="toggleHotelPlan(\'' + name.replace(/'/g, "\\'") + '\')">' + (active ? '下架' : '上架') + '</button>' +
         '</div>';
     }).join('');
   } catch(e) {
