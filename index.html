@@ -18,7 +18,7 @@
     }
   })();
 </script>
-<title>業務下單系統 — FlyLight Travel Lab</title>
+<title>業務下單系統 v20261008c — FlyLight Travel Lab</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -526,7 +526,7 @@ function showMain() {
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('mainPage').style.display = 'block';
   document.getElementById('cartFab').style.display = 'flex';
-  document.getElementById('agentLabel').textContent = currentAgent.id + ' · ' + currentAgent.name;
+  document.getElementById('agentLabel').textContent = currentAgent.id + ' · ' + currentAgent.name + ' [v20261008c]';
   if (currentAgent.id === 'ADMIN') {
     document.getElementById('tab-admin').style.display = 'block';
   }
