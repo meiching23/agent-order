@@ -506,6 +506,7 @@ async function loadAndRenderPlans() {
         price: Number(p['單價']),
         desc: p['說明'] || '',
         addons: p['加購項目'] || '',
+        stock: p['庫存'] !== undefined ? Number(p['庫存']) : null,
         type: p['方案編號'].startsWith('S') ? 'short' : p['方案編號'].startsWith('L') ? 'long' : 'promo'
       }));
       renderPlans(plans);
@@ -554,12 +555,17 @@ function planCard(p) {
       `).join('')}
     </div>` : '';
 
+  const stockHtml = p.stock !== null
+    ? `<div style="font-size:11px;color:${p.stock <= 3 ? '#c84030' : '#5a8a40'};font-weight:700;margin-top:2px;">剩餘 ${p.stock} 組</div>`
+    : '';
+
   return `
   <div class="plan-card">
     <div class="plan-left">
       <div class="plan-id">${p.id}</div>
       <div class="plan-name">${p.name}</div>
       <div class="plan-desc">${p.desc}</div>
+      ${stockHtml}
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
       <div class="plan-price">$${p.price.toLocaleString()}</div>
@@ -857,7 +863,7 @@ async function loadOrders() {
           <div class="order-item hotel">
             <div class="order-header">
               <div>
-                <div class="order-no">🏨 ${o.timestamp || ''}</div>
+                <div class="order-no">🏨 ${(o.timestamp || '').split(' ')[0]}</div>
                 <div class="order-plans">${escHtml(o.planName || '')}</div>
               </div>
               <div class="order-status ${statusClass}">${status}</div>
@@ -875,7 +881,7 @@ async function loadOrders() {
           <div class="order-item">
             <div class="order-header">
               <div>
-                <div class="order-no">${o['時間'] || ''}</div>
+                <div class="order-no">${(o['時間'] || '').split(' ')[0]}</div>
                 <div class="order-plans">${o['方案名稱'] || ''}</div>
               </div>
               <div class="order-status status-${o['狀態'] === '已確認' ? 'confirmed' : 'pending'}">${o['狀態'] || '待確認'}</div>
