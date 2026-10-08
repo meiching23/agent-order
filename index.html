@@ -527,7 +527,6 @@ async function loadAndRenderPlans() {
     if (data.plans && data.plans.length) {
       var plans = data.plans.map(function(p) {
         var stockVal = p['庫存'];
-        console.log('[方案庫存]', p['方案名稱'], '庫存原值:', stockVal, '型別:', typeof stockVal);
         var stock = (stockVal !== undefined && stockVal !== null && stockVal !== '') ? Number(stockVal) : null;
         var id = String(p['方案編號'] || '');
         return {
@@ -1045,7 +1044,7 @@ async function loadAllOrders() {
         '</div></div>';
     }).join('');
   } catch(e) {
-    document.getElementById('allOrderList').innerHTML = '<div class="empty-state">載入失敗</div>';
+    document.getElementById('allOrderList').innerHTML = '<div class="empty-state">載入失敗：' + (e && e.message ? e.message : String(e)) + '</div>';
   }
 }
 
