@@ -893,7 +893,7 @@ async function loadOrders() {
           '<div class="order-detail">🌙 ' + (o.nights || 0) + '晚' +
           (o.clientName ? ' · 👤 ' + escHtml(o.clientName) : '') +
           (o.remarks ? ' · 📝 ' + escHtml(o.remarks) : '') +
-          (o.checkIn ? '<br>📅 入住：' + o.checkIn + ' ～ ' + o.checkOut : '') +
+          (o.checkIn ? '<br>📅 入住：' + dateOnly(o.checkIn) + ' ～ ' + dateOnly(o.checkOut) : '') +
           (o.guestName ? '<br>🧑 住客：' + escHtml(o.guestName) + ' ' + (o.guestPhone || '') : '') +
           '</div>' +
           '<div class="order-total hotel">$' + Number(o.total || 0).toLocaleString() + '</div>' +
