@@ -481,8 +481,8 @@ function dateOnly(str) {
   var m1 = s.match(/^(\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2})/);
   if (m1) return m1[1];
 
-  // 2) ISO 含T "2026-10-08T..." → 取T前
-  if (s.indexOf('T') > 0) return s.split('T')[0];
+  // 2) ISO 含T "2026-10-08T..." → 取T前（排除 GMT 的 T）
+  if (/^\d{4}/.test(s) && s.indexOf('T') > 0) return s.split('T')[0];
 
   // 3) "Wed Oct 07 2026 ..." 或 "Mon Oct 05 2026 ..."
   //    → 用 regex 直接抓 月名+日+年，不靠 new Date() 解析
@@ -1022,8 +1022,10 @@ async function loadAllOrders() {
     }
 
     // 依日期分組
+    if (orders[0]) console.log('[日期debug] 第一筆時間原值:', JSON.stringify(o['時間']), typeof o['時間']);
     var groups = {};
     orders.forEach(function(o) {
+      if (!groups['__logged']) { console.log('[日期]', JSON.stringify(o['時間'])); groups['__logged']=true; }
       var d = dateOnly(o['時間']) || '未知日期';
       if (!groups[d]) groups[d] = [];
       groups[d].push(o);
