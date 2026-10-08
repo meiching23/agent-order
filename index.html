@@ -517,9 +517,7 @@ function showMain() {
   document.getElementById('mainPage').style.display = 'block';
   document.getElementById('cartFab').style.display = 'flex';
   document.getElementById('agentLabel').textContent = currentAgent.id + ' · ' + currentAgent.name + ' [v20261008c]';
-  if (currentAgent.id === 'ADMIN') {
-    document.getElementById('tab-admin').style.display = 'block';
-  }
+  document.getElementById('tab-admin').style.display = (currentAgent.id === 'ADMIN') ? 'block' : 'none';
   loadAndRenderPlans();
 }
 
